@@ -1,0 +1,10 @@
+# Generated outputs
+CLAUDE.md
+web-ai-doc.md
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+*.bak

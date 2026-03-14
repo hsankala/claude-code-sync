@@ -1,0 +1,37 @@
+# claude-code-sync.yaml
+#
+# Declares which memory docs and skills this project needs.
+# The sync script reads this file and assembles everything.
+#
+# Two entry types:
+#   Local  → filename (looked up in ai-docs/ folder)
+#   Remote → full URL (fetched via HTTP, e.g. GitHub raw URLs)
+#
+# Order in the list = order in the assembled output.
+
+# --------------------------------------------------------------------------
+# CLAUDE.md — full memory file for Claude Code
+# Includes everything: project-specific docs, shared guidelines, tooling docs
+# --------------------------------------------------------------------------
+claude_md:
+  # Project-specific local docs (add your own here):
+  # - about-my-project.md
+  # - project-architecture.md
+
+  # Shared docs from claude-code-sync:
+  - https://raw.githubusercontent.com/hefin/claude-code-sync/main/docs/code-comments.md
+  - https://raw.githubusercontent.com/hefin/claude-code-sync/main/docs/tool-execution.md
+  - https://raw.githubusercontent.com/hefin/claude-code-sync/main/docs/claude-git-usage.md
+
+# --------------------------------------------------------------------------
+# Web AI doc — subset for sharing with web-based AI assistants
+# Excludes tooling-specific and Claude Code-specific docs
+# --------------------------------------------------------------------------
+web_ai_doc:
+  # - about-my-project.md
+
+# --------------------------------------------------------------------------
+# Skills — Claude Code slash commands synced to .claude/commands/
+# --------------------------------------------------------------------------
+skills: []
+  # - https://raw.githubusercontent.com/hefin/claude-code-sync/main/skills/refactor.md
