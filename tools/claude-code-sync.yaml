@@ -1,0 +1,35 @@
+# claude-code-sync.yaml
+#
+# This is the config for the claude-code-sync repo itself.
+# All entries are local — this repo IS the source, no remote URLs needed.
+#
+# Local entries: filename looked up in ai-docs/ (default) or skills/ for skill entries
+# Remote entries: full https:// URL (not used here)
+# Order in list = order in assembled output
+
+# --------------------------------------------------------------------------
+# CLAUDE.md — full memory file for Claude Code
+# --------------------------------------------------------------------------
+claude_md:
+  - about-claude-code-sync.md
+  - speech-to-text.md
+  - chat-output-formatting.md
+  - claude-git-usage-windows.md
+
+# --------------------------------------------------------------------------
+# Web AI doc — subset for sharing with web-based AI assistants
+# Excludes tooling-specific and Claude Code-specific docs
+# --------------------------------------------------------------------------
+web_ai_doc:
+  - speech-to-text.md
+  - chat-output-formatting.md
+
+# --------------------------------------------------------------------------
+# Skills — synced to .claude/commands/
+# Entries with a path separator are resolved relative to the project root
+# --------------------------------------------------------------------------
+skills:
+  - skills/baby-step.md
+  - skills/commit.md
+  - skills/summary.md
+  - skills/think.md
