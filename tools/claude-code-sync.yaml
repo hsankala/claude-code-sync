@@ -13,7 +13,10 @@
 claude_md:
   - about-claude-code-sync.md
   - speech-to-text.md
-  - chat-output-formatting.md
+  - chat-guidelines.md
+  - chat-response-style-guide.md
+  - chat-session-banners.md
+  - tool-transparency.md
   - claude-git-usage-windows.md
 
 # --------------------------------------------------------------------------
@@ -21,8 +24,7 @@ claude_md:
 # Excludes tooling-specific and Claude Code-specific docs
 # --------------------------------------------------------------------------
 web_ai_doc:
-  - speech-to-text.md
-  - chat-output-formatting.md
+  - about-claude-code-sync.md
 
 # --------------------------------------------------------------------------
 # Skills — synced to .claude/commands/
