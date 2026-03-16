@@ -8,6 +8,7 @@
 # Files must be pushed to GitHub before this config will reflect local changes.
 
 github_base_url: https://raw.githubusercontent.com/hsankala/claude-code-sync/main
+script_path: tools/sync-claude-code.ps1
 
 # --------------------------------------------------------------------------
 # CLAUDE.md — assembled from GitHub URLs to test remote fetch
@@ -24,6 +25,7 @@ claude_md:
 # --------------------------------------------------------------------------
 # Web AI doc — subset via GitHub URLs
 # --------------------------------------------------------------------------
+web_ai_doc_filename: web-ai-doc.md
 web_ai_doc:
   - about-claude-code-sync.md
 

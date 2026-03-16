@@ -7,6 +7,7 @@
 # Order in list = order in assembled output
 
 github_base_url: https://raw.githubusercontent.com/hsankala/claude-code-sync/main
+script_path: tools/sync-claude-code.ps1
 
 # --------------------------------------------------------------------------
 # CLAUDE.md — full memory file for Claude Code
@@ -24,6 +25,7 @@ claude_md:
 # Web AI doc — subset for sharing with web-based AI assistants
 # Excludes tooling-specific and Claude Code-specific docs
 # --------------------------------------------------------------------------
+web_ai_doc_filename: web-ai-doc.md
 web_ai_doc:
   - about-claude-code-sync.md
 

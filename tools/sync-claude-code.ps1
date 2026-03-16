@@ -31,7 +31,7 @@ $ScriptDirectory      = Split-Path -Parent $MyInvocation.MyCommand.Path
 $ProjectRoot          = Split-Path -Parent $ScriptDirectory
 $ConfigFilePath       = Join-Path $ScriptDirectory $Config
 $ClaudeMdOutputPath   = Join-Path $ProjectRoot 'CLAUDE.md'
-$WebAiDocOutputPath   = Join-Path $ProjectRoot 'web-ai-doc.md'
+$WebAiDocOutputPath   = $null  # resolved after config is loaded
 $SkillsOutputDir      = Join-Path $ProjectRoot '.claude\commands'
 $DefaultLocalDocsDir  = Join-Path $ProjectRoot 'ai-docs'
 
@@ -279,12 +279,18 @@ Write-StepSuccess "Config loaded: $ConfigFilePath"
 
 # Resolve GitHub base URL (used for self-update and template bootstrap)
 $GitHubBaseUrl     = Get-YamlScalarValue -Lines $YamlLines -Key 'github_base_url'
-$RemoteScriptUrl   = if ($GitHubBaseUrl) { "$GitHubBaseUrl/scripts/sync-claude-code.ps1" } else { $null }
+$ScriptPath        = Get-YamlScalarValue -Lines $YamlLines -Key 'script_path'
+$RemoteScriptUrl   = if ($GitHubBaseUrl -and $ScriptPath) { "$GitHubBaseUrl/$ScriptPath" } else { $null }
 $RemoteTemplateUrl = if ($GitHubBaseUrl) { "$GitHubBaseUrl/templates/claude-code-sync.yaml" } else { $null }
 
 # Resolve local docs directory (default: ai-docs/ in project root)
 $LocalDocsOverride = Get-YamlScalarValue -Lines $YamlLines -Key 'local_docs_dir'
 $LocalDocsDir = if ($LocalDocsOverride) { Join-Path $ProjectRoot $LocalDocsOverride } else { $DefaultLocalDocsDir }
+
+# Resolve web AI doc output filename
+$WebAiDocFilename   = Get-YamlScalarValue -Lines $YamlLines -Key 'web_ai_doc_filename'
+if (-not $WebAiDocFilename) { $WebAiDocFilename = 'web-ai-doc.md' }
+$WebAiDocOutputPath = Join-Path $ProjectRoot $WebAiDocFilename
 
 $ClaudeMdEntries = Get-YamlListSection -Lines $YamlLines -SectionName 'claude_md'
 $WebAiDocEntries = Get-YamlListSection -Lines $YamlLines -SectionName 'web_ai_doc'
@@ -295,6 +301,39 @@ Write-StepInfo "web_ai_doc entries: $($WebAiDocEntries.Count)"
 Write-StepInfo "skills entries:     $($SkillsEntries.Count)"
 Write-StepInfo "Local docs dir:     $LocalDocsDir"
 if ($GitHubBaseUrl) { Write-StepInfo "GitHub base URL:    $GitHubBaseUrl" }
+
+# ---------------------------------------------------------------------------
+# Self-update — fetch remote script, compare hashes, overwrite if changed
+# ---------------------------------------------------------------------------
+Write-SectionHeader "Checking for Script Updates"
+
+if (-not $RemoteScriptUrl) {
+    Write-StepSkipped "No github_base_url/script_path in config — skipping self-update"
+}
+else {
+    Write-StepInfo "Remote: $RemoteScriptUrl"
+
+    $RemoteContent = Invoke-RemoteFetch -Url $RemoteScriptUrl
+
+    $Sha256      = [System.Security.Cryptography.SHA256]::Create()
+    $RemoteBytes = [System.Text.Encoding]::UTF8.GetBytes($RemoteContent)
+    $LocalBytes  = [System.Text.Encoding]::UTF8.GetBytes((Get-Content -Path $MyInvocation.MyCommand.Path -Raw -Encoding UTF8))
+    $RemoteHash  = [BitConverter]::ToString($Sha256.ComputeHash($RemoteBytes)) -replace '-', ''
+    $LocalHash   = [BitConverter]::ToString($Sha256.ComputeHash($LocalBytes))  -replace '-', ''
+
+    if ($RemoteHash -eq $LocalHash) {
+        Write-StepSuccess "Script is up to date"
+    }
+    else {
+        Write-StepInfo "Update found — overwriting script"
+        [System.IO.File]::WriteAllText($MyInvocation.MyCommand.Path, $RemoteContent, [System.Text.Encoding]::UTF8)
+        Write-StepSuccess "Script updated successfully"
+        Write-Host ""
+        Write-Host "  Script has been updated. Please rerun to continue with the latest version." -ForegroundColor Yellow
+        Write-Host ""
+        exit 0
+    }
+}
 
 # ---------------------------------------------------------------------------
 # Assemble CLAUDE.md
@@ -318,19 +357,19 @@ else {
 }
 
 # ---------------------------------------------------------------------------
-# Assemble web-ai-doc.md
+# Assemble Web AI Documentation
 # ---------------------------------------------------------------------------
-Write-SectionHeader "Assembling web-ai-doc.md"
+Write-SectionHeader "Assembling Web AI Documentation"
 
 if ($WebAiDocEntries.Count -gt 0) {
     $WebAiDocIncluded = Invoke-DocAssembly `
         -Entries $WebAiDocEntries `
         -OutputPath $WebAiDocOutputPath `
         -LocalDocsDir $LocalDocsDir `
-        -OutputLabel 'web-ai-doc.md'
+        -OutputLabel $WebAiDocFilename
 
     Write-Host ""
-    Write-Host "  web-ai-doc.md written successfully" -ForegroundColor Green
+    Write-Host "  $WebAiDocFilename written successfully" -ForegroundColor Green
     Write-Host "  Output:   $WebAiDocOutputPath" -ForegroundColor Cyan
     Write-Host "  Included: $($WebAiDocIncluded.Count) document(s)" -ForegroundColor Yellow
 }
