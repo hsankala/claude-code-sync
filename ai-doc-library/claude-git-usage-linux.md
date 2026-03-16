@@ -4,8 +4,8 @@
 
 Git is installed on this server (`/usr/bin/git`, version 2.43.0). Claude Code has access to one local repository only:
 
-- **Local repo:** `/home/hefin/claude-ops`
-- **Remote:** `git@github.com:hsankala/claude-ops-oci-arm-main.git`
+- **Local repo:** `/home/operator/project`
+- **Remote:** `git@github.com:operator/main-server.git`
 - **No SSH key is present on this server** — Claude Code has no ability to push to GitHub
 
 ## User Workflow
@@ -21,7 +21,7 @@ Git is installed on this server (`/usr/bin/git`, version 2.43.0). Claude Code ha
 - User reviews all local commits in Git Extensions before pushing
 - User handles all pushes to the remote GitHub repository
 
-**In plain terms:** Claude commits locally. Hefin pulls those commits down to his Windows machine, reviews them visually in Git Extensions, then pushes to GitHub when satisfied.
+**In plain terms:** Claude commits locally. The operator pulls those commits down to their Windows machine, reviews them visually in Git Extensions, then pushes to GitHub when satisfied.
 
 ## CRITICAL: No Claude Code Attribution
 
@@ -53,5 +53,5 @@ git commit -m "Commit title here
 
 - Local commits only — no pushing under any circumstances
 - Always confirm the commit message with the user before committing
-- Work with Linux paths (`/home/hefin/...`) at all times
+- Work with Linux paths (`/home/operator/...`) at all times
 - No Claude Code attribution in any commit messages

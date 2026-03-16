@@ -13,7 +13,7 @@ github_base_url: https://raw.githubusercontent.com/hsankala/claude-code-sync/mai
 # CLAUDE.md — assembled from GitHub URLs to test remote fetch
 # --------------------------------------------------------------------------
 claude_md:
-  - https://raw.githubusercontent.com/hsankala/claude-code-sync/main/ai-docs/about-claude-code-sync.md
+  - about-claude-code-sync.md
   - https://raw.githubusercontent.com/hsankala/claude-code-sync/main/ai-doc-library/speech-to-text.md
   - https://raw.githubusercontent.com/hsankala/claude-code-sync/main/ai-doc-library/chat-guidelines.md
   - https://raw.githubusercontent.com/hsankala/claude-code-sync/main/ai-doc-library/chat-response-style-guide.md
@@ -25,7 +25,7 @@ claude_md:
 # Web AI doc — subset via GitHub URLs
 # --------------------------------------------------------------------------
 web_ai_doc:
-  - https://raw.githubusercontent.com/hsankala/claude-code-sync/main/ai-docs/about-claude-code-sync.md
+  - about-claude-code-sync.md
 
 # --------------------------------------------------------------------------
 # Skills — fetched from GitHub

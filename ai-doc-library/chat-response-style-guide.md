@@ -169,7 +169,7 @@ For config summaries, server details, or key-value data:
 │  Hostname  :  arm-main-compute            │
 │  OS        :  Ubuntu 24.04 (ARM64)        │
 │  RAM       :  24GB                        │
-│  User      :  hefin                       │
+│  User      :  operator                    │
 ╰───────────────────────────────────────────╯
 ```
 
@@ -189,8 +189,8 @@ A simple diagram beats three paragraphs of explanation.
 When discussing directory structures:
 
 ```
-/home/hefin/
-├── claude-ops/
+/home/operator/
+├── project/
 │   ├── .git/
 │   ├── CLAUDE.md
 │   └── README.md
