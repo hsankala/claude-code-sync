@@ -7,7 +7,14 @@
     Reads claude-code-sync.yaml (alongside this script), fetches remote docs via HTTP,
     reads local docs from ai-docs/, assembles output files, and syncs skill files to
     .claude/commands/. Run from the project root or from the tools/ folder.
+
+.PARAMETER Config
+    Name of the config file to use (must be in the same directory as this script).
+    Defaults to claude-code-sync.yaml.
 #>
+param(
+    [string]$Config = 'claude-code-sync.yaml'
+)
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
@@ -16,15 +23,13 @@ $ErrorActionPreference = 'Stop'
 # Constants
 # ---------------------------------------------------------------------------
 $ScriptVersion = '0.1.0'
-$RemoteScriptUrl   = 'https://raw.githubusercontent.com/hsankala/claude-code-sync/main/scripts/sync-claude-code.ps1'
-$RemoteTemplateUrl = 'https://raw.githubusercontent.com/hsankala/claude-code-sync/main/templates/claude-code-sync.yaml'
 
 # ---------------------------------------------------------------------------
 # Path setup — script lives in tools/, project root is one level up
 # ---------------------------------------------------------------------------
 $ScriptDirectory      = Split-Path -Parent $MyInvocation.MyCommand.Path
 $ProjectRoot          = Split-Path -Parent $ScriptDirectory
-$ConfigFilePath       = Join-Path $ScriptDirectory 'claude-code-sync.yaml'
+$ConfigFilePath       = Join-Path $ScriptDirectory $Config
 $ClaudeMdOutputPath   = Join-Path $ProjectRoot 'CLAUDE.md'
 $WebAiDocOutputPath   = Join-Path $ProjectRoot 'web-ai-doc.md'
 $SkillsOutputDir      = Join-Path $ProjectRoot '.claude\commands'
@@ -272,6 +277,11 @@ if (-not (Test-Path $ConfigFilePath)) {
 $YamlLines = Get-Content -Path $ConfigFilePath -Encoding UTF8
 Write-StepSuccess "Config loaded: $ConfigFilePath"
 
+# Resolve GitHub base URL (used for self-update and template bootstrap)
+$GitHubBaseUrl     = Get-YamlScalarValue -Lines $YamlLines -Key 'github_base_url'
+$RemoteScriptUrl   = if ($GitHubBaseUrl) { "$GitHubBaseUrl/scripts/sync-claude-code.ps1" } else { $null }
+$RemoteTemplateUrl = if ($GitHubBaseUrl) { "$GitHubBaseUrl/templates/claude-code-sync.yaml" } else { $null }
+
 # Resolve local docs directory (default: ai-docs/ in project root)
 $LocalDocsOverride = Get-YamlScalarValue -Lines $YamlLines -Key 'local_docs_dir'
 $LocalDocsDir = if ($LocalDocsOverride) { Join-Path $ProjectRoot $LocalDocsOverride } else { $DefaultLocalDocsDir }
@@ -284,6 +294,7 @@ Write-StepInfo "claude_md entries:  $($ClaudeMdEntries.Count)"
 Write-StepInfo "web_ai_doc entries: $($WebAiDocEntries.Count)"
 Write-StepInfo "skills entries:     $($SkillsEntries.Count)"
 Write-StepInfo "Local docs dir:     $LocalDocsDir"
+if ($GitHubBaseUrl) { Write-StepInfo "GitHub base URL:    $GitHubBaseUrl" }
 
 # ---------------------------------------------------------------------------
 # Assemble CLAUDE.md
