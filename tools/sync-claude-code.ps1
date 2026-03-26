@@ -1,4 +1,4 @@
-﻿#Requires -Version 5.1
+﻿﻿#Requires -Version 5.1
 <#
 .SYNOPSIS
     Assembles CLAUDE.md, web-ai-doc.md, and syncs Claude Code skills from claude-code-sync.yaml.
@@ -446,11 +446,17 @@ else {
 
     $RemoteContent = Invoke-RemoteFetch -Url $RemoteScriptUrl
 
-    $Sha256      = [System.Security.Cryptography.SHA256]::Create()
-    $RemoteBytes = [System.Text.Encoding]::UTF8.GetBytes($RemoteContent)
-    $LocalBytes  = [System.Text.Encoding]::UTF8.GetBytes((Get-Content -Path $MyInvocation.MyCommand.Path -Raw -Encoding UTF8))
-    $RemoteHash  = [BitConverter]::ToString($Sha256.ComputeHash($RemoteBytes)) -replace '-', ''
-    $LocalHash   = [BitConverter]::ToString($Sha256.ComputeHash($LocalBytes))  -replace '-', ''
+    # Normalize line endings to LF before hashing — local file is CRLF on Windows,
+    # GitHub serves LF. Without normalization hashes always differ and self-update
+    # fires on every run.
+    $Sha256           = [System.Security.Cryptography.SHA256]::Create()
+    $LocalRaw         = Get-Content -Path $MyInvocation.MyCommand.Path -Raw -Encoding UTF8
+    $RemoteNormalized = $RemoteContent -replace "`r`n", "`n" -replace "`r", "`n"
+    $LocalNormalized  = $LocalRaw      -replace "`r`n", "`n" -replace "`r", "`n"
+    $RemoteBytes      = [System.Text.Encoding]::UTF8.GetBytes($RemoteNormalized)
+    $LocalBytes       = [System.Text.Encoding]::UTF8.GetBytes($LocalNormalized)
+    $RemoteHash       = [BitConverter]::ToString($Sha256.ComputeHash($RemoteBytes)) -replace '-', ''
+    $LocalHash        = [BitConverter]::ToString($Sha256.ComputeHash($LocalBytes))  -replace '-', ''
 
     if ($RemoteHash -eq $LocalHash) {
         Write-StepSuccess "Script is up to date"
