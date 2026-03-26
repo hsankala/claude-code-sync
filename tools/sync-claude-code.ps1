@@ -279,7 +279,8 @@ Write-StepSuccess "Config loaded: $ConfigFilePath"
 
 # Resolve GitHub base URL (used for self-update and template bootstrap)
 $GitHubBaseUrl     = Get-YamlScalarValue -Lines $YamlLines -Key 'github_base_url'
-$ScriptPath        = Get-YamlScalarValue -Lines $YamlLines -Key 'script_path'
+$ScriptPath        = Get-YamlScalarValue -Lines $YamlLines -Key 'script_path_ps1'
+if (-not $ScriptPath) { $ScriptPath = Get-YamlScalarValue -Lines $YamlLines -Key 'script_path' }
 $RemoteScriptUrl   = if ($GitHubBaseUrl -and $ScriptPath) { "$GitHubBaseUrl/$ScriptPath" } else { $null }
 $RemoteTemplateUrl = if ($GitHubBaseUrl) { "$GitHubBaseUrl/templates/claude-code-sync.yaml" } else { $null }
 

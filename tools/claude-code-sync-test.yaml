@@ -8,7 +8,8 @@
 # Files must be pushed to GitHub before this config will reflect local changes.
 
 github_base_url: https://raw.githubusercontent.com/hsankala/claude-code-sync/main
-script_path: tools/sync-claude-code.ps1
+script_path_ps1: tools/sync-claude-code.ps1
+script_path_sh:  tools/sync-claude-code.sh
 
 # --------------------------------------------------------------------------
 # CLAUDE.md — assembled from GitHub URLs to test remote fetch
