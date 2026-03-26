@@ -1,4 +1,4 @@
-﻿# Git Commit Guidelines
+# Git Commit Guidelines
 
 ---
 
