@@ -30,12 +30,13 @@ launcher:
 # --------------------------------------------------------------------------
 claude_md:
   - about-claude-code-sync.md
-  - ai-doc-library/speech-to-text.md
-  - ai-doc-library/chat-guidelines.md
-  - ai-doc-library/chat-response-style-guide.md
-  - ai-doc-library/chat-session-banners.md
-  - ai-doc-library/tool-transparency.md
-  - ai-doc-library/claude-git-usage-windows.md
+  - https://raw.githubusercontent.com/hsankala/claude-code-sync/main/ai-doc-library/speech-to-text.md
+  - https://raw.githubusercontent.com/hsankala/claude-code-sync/main/ai-doc-library/chat-guidelines.md
+  - https://raw.githubusercontent.com/hsankala/claude-code-sync/main/ai-doc-library/chat-response-style-guide.md
+  - https://raw.githubusercontent.com/hsankala/claude-code-sync/main/ai-doc-library/chat-session-banners.md
+  - https://raw.githubusercontent.com/hsankala/claude-code-sync/main/ai-doc-library/tool-transparency.md
+  - https://raw.githubusercontent.com/hsankala/claude-code-sync/main/ai-doc-library/claude-git-usage-windows.md
+  - https://raw.githubusercontent.com/hsankala/claude-code-sync/main/ai-doc-library/claude-code-sync-guide.md
 
 # --------------------------------------------------------------------------
 # Web AI doc — subset for sharing with web-based AI assistants
@@ -50,7 +51,8 @@ web_ai_doc:
 # Entries with a path separator are resolved relative to the project root
 # --------------------------------------------------------------------------
 skills:
-  - skills/baby-step.md
-  - skills/commit.md
-  - skills/summary.md
-  - skills/think.md
+  - https://raw.githubusercontent.com/hsankala/claude-code-sync/main/skills/baby-step.md
+  - https://raw.githubusercontent.com/hsankala/claude-code-sync/main/skills/commit.md
+  - https://raw.githubusercontent.com/hsankala/claude-code-sync/main/skills/init-project.md
+  - https://raw.githubusercontent.com/hsankala/claude-code-sync/main/skills/summary.md
+  - https://raw.githubusercontent.com/hsankala/claude-code-sync/main/skills/think.md
