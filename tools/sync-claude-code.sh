@@ -319,7 +319,7 @@ mapfile -t SKILLS_ENTRIES     < <(get_yaml_list_section 'skills'     "$CONFIG_FI
 
 write_step_info "claude_md entries:  ${#CLAUDE_MD_ENTRIES[@]}"
 write_step_info "web_ai_doc entries: ${#WEB_AI_DOC_ENTRIES[@]}"
-write_step_info "skills entries:     ${#SKILLS_ENTRIES[@]}"
+write_step_info "skills to sync:     ${#SKILLS_ENTRIES[@]}"
 write_step_info "Local docs dir:     $LOCAL_DOCS_DIR"
 [[ -n "$GITHUB_BASE_URL" ]] && write_step_info "GitHub base URL:    $GITHUB_BASE_URL"
 
@@ -408,7 +408,7 @@ if [[ ${#SKILLS_ENTRIES[@]} -gt 0 ]]; then
     write_output_path    "Output:  $SKILLS_OUTPUT_DIR"
     write_output_count   "Synced:  ${skills_synced_count} skill(s)"
 else
-    write_step_skipped "No skills entries in config — skipping"
+    write_step_skipped "No skills in config — skipping"
 fi
 
 # ---------------------------------------------------------------------------
