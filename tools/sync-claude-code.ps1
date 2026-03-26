@@ -1,12 +1,14 @@
-#Requires -Version 5.1
+﻿#Requires -Version 5.1
 <#
 .SYNOPSIS
     Assembles CLAUDE.md, web-ai-doc.md, and syncs Claude Code skills from claude-code-sync.yaml.
 
 .DESCRIPTION
     Reads claude-code-sync.yaml (alongside this script), fetches remote docs via HTTP,
-    reads local docs from ai-docs/, assembles output files, and syncs skill files to
-    .claude/commands/. Run from the project root or from the tools/ folder.
+    reads local docs from ai-docs/, assembles output files, syncs skill files to
+    .claude/commands/, and optionally generates a Windows Terminal launcher script
+    (open-claude.ps1) from the launcher section of the config.
+    Run from the project root or from the tools/ folder.
 
 .PARAMETER Config
     Name of the config file to use (must be in the same directory as this script).
@@ -22,7 +24,7 @@ $ErrorActionPreference = 'Stop'
 # ---------------------------------------------------------------------------
 # Constants
 # ---------------------------------------------------------------------------
-$ScriptVersion = '0.1.2'
+$ScriptVersion = '0.1.3'
 
 # ---------------------------------------------------------------------------
 # Path setup — script lives in tools/, project root is one level up
@@ -117,6 +119,79 @@ function Get-YamlScalarValue {
         }
     }
     return $null
+}
+
+# Reads a scalar value from within a named section, e.g. 'wsl_distro' inside 'launcher:'
+function Get-YamlNestedScalarValue {
+    param(
+        [string[]]$Lines,
+        [string]  $SectionName,
+        [string]  $Key
+    )
+
+    $InsideSection = $false
+
+    foreach ($Line in $Lines) {
+        if ($Line -match "^${SectionName}:") {
+            $InsideSection = $true
+            continue
+        }
+        if ($InsideSection) {
+            # Any new top-level key ends this section
+            if ($Line -match '^[a-zA-Z_]') { break }
+            # Match indented key: value — strip comments, whitespace, and surrounding quotes
+            if ($Line -match "^\s+${Key}:\s*(.+)") {
+                $Value = $Matches[1] -replace '\s*#.*$', '' -replace '\s+$', ''
+                $Value = $Value     -replace '^"(.*)"$', '$1' -replace "^'(.*)'$", '$1'
+                return $Value
+            }
+        }
+    }
+    return $null
+}
+
+# Reads a list sub-section from within a named section, e.g. 'extra_dirs' inside 'launcher:'
+function Get-YamlNestedListSection {
+    param(
+        [string[]]$Lines,
+        [string]  $SectionName,
+        [string]  $SubSectionName
+    )
+
+    $Items            = [System.Collections.Generic.List[string]]::new()
+    $InsideSection    = $false
+    $InsideSubSection = $false
+
+    foreach ($Line in $Lines) {
+        if ($Line -match "^${SectionName}:") {
+            $InsideSection = $true
+            continue
+        }
+        if ($InsideSection) {
+            # Any new top-level key ends the whole section
+            if ($Line -match '^[a-zA-Z_]') { break }
+
+            if ($InsideSubSection) {
+                # List items are indented deeper than the sub-section header (4+ spaces)
+                if ($Line -match '^\s{4,}-\s+(.+)') {
+                    $Value = $Matches[1] -replace '\s*#.*$', '' -replace '\s+$', ''
+                    if ($Value) { $Items.Add($Value) }
+                }
+                # Any other non-blank indented line is a sibling key — end sub-section
+                elseif ($Line -notmatch '^\s*$') {
+                    $InsideSubSection = $false
+                }
+            }
+            else {
+                # Look for the sub-section header (indented key at 2-space level)
+                if ($Line -match "^\s+${SubSectionName}:") {
+                    $InsideSubSection = $true
+                }
+            }
+        }
+    }
+
+    return , $Items.ToArray()
 }
 
 # ---------------------------------------------------------------------------
@@ -252,6 +327,61 @@ function Invoke-SkillsSync {
     }
 
     return , $SyncedSkills.ToArray()
+}
+
+# ---------------------------------------------------------------------------
+# Generate the Claude Code launcher script (open-claude.ps1)
+# Writes to the same directory as the sync script (tools/)
+# ---------------------------------------------------------------------------
+function Invoke-LauncherGeneration {
+    param(
+        [string]   $WslDistro,
+        [string]   $ProjectPath,
+        [string]   $ClaudePath,
+        [string]   $TabTitle,
+        [string]   $TabColor,
+        [string[]] $ExtraDirs
+    )
+
+    $LauncherOutputPath = Join-Path $ScriptDirectory 'open-claude.ps1'
+
+    # Build the --add-dir argument string from the extra_dirs list
+    $ExtraDirArgs = ''
+    foreach ($Dir in $ExtraDirs) {
+        $ExtraDirArgs += " --add-dir $Dir"
+    }
+
+    # Generate the launcher script content.
+    # Variables prefixed with a backtick (e.g. `$WslCommand) are passed through
+    # as literal variable references into the output file. Un-prefixed variables
+    # (e.g. $WslDistro) are substituted with their values from this script.
+    $LauncherContent = @"
+# open-claude.ps1
+# Auto-generated by sync-claude-code.ps1 — do not edit manually.
+# To change these values, update the launcher section in claude-code-sync.yaml
+# and re-run the sync script.
+
+function Open-ClaudeCode {
+    # Claude executable path note:
+    # Claude is installed locally (not system-wide) and aliased in ~/.bashrc.
+    # Aliases only load in interactive shells — PowerShell WSL commands run
+    # non-interactive shells that skip ~/.bashrc. We use the full executable path.
+    #
+    # To update: open WSL, run: type claude
+    # Copy the path and update claude_path in claude-code-sync.yaml, then resync.
+
+    `$WslCommand = "wsl -d $WslDistro -e bash -c 'cd $ProjectPath && $ClaudePath$ExtraDirArgs'"
+
+    `$WindowsTerminalPath = "`$env:LOCALAPPDATA\Microsoft\WindowsApps\wt.exe"
+    & `$WindowsTerminalPath -w 0 new-tab --title "$TabTitle" --tabColor "$TabColor" pwsh.exe -NoExit -Command `$WslCommand
+}
+
+Open-ClaudeCode
+"@
+
+    [System.IO.File]::WriteAllText($LauncherOutputPath, $LauncherContent, [System.Text.Encoding]::UTF8)
+
+    return $LauncherOutputPath
 }
 
 # ===========================================================================
@@ -395,6 +525,41 @@ if ($SkillsEntries.Count -gt 0) {
 }
 else {
     Write-StepSkipped "No skills entries in config — skipping"
+}
+
+# ---------------------------------------------------------------------------
+# Generate launcher script
+# ---------------------------------------------------------------------------
+Write-SectionHeader "Generating Launcher Script"
+
+$LauncherWslDistro   = Get-YamlNestedScalarValue  -Lines $YamlLines -SectionName 'launcher' -Key 'wsl_distro'
+$LauncherProjectPath = Get-YamlNestedScalarValue  -Lines $YamlLines -SectionName 'launcher' -Key 'project_path'
+$LauncherClaudePath  = Get-YamlNestedScalarValue  -Lines $YamlLines -SectionName 'launcher' -Key 'claude_path'
+$LauncherTabTitle    = Get-YamlNestedScalarValue  -Lines $YamlLines -SectionName 'launcher' -Key 'tab_title'
+$LauncherTabColor    = Get-YamlNestedScalarValue  -Lines $YamlLines -SectionName 'launcher' -Key 'tab_color'
+$LauncherExtraDirs   = Get-YamlNestedListSection  -Lines $YamlLines -SectionName 'launcher' -SubSectionName 'extra_dirs'
+
+if (-not $LauncherWslDistro) {
+    Write-StepSkipped "No launcher section in config — skipping"
+}
+else {
+    Write-StepInfo "WSL distro:   $LauncherWslDistro"
+    Write-StepInfo "Project path: $LauncherProjectPath"
+    Write-StepInfo "Claude path:  $LauncherClaudePath"
+    Write-StepInfo "Tab title:    $LauncherTabTitle"
+    Write-StepInfo "Extra dirs:   $($LauncherExtraDirs.Count)"
+
+    $LauncherOutputPath = Invoke-LauncherGeneration `
+        -WslDistro   $LauncherWslDistro   `
+        -ProjectPath $LauncherProjectPath `
+        -ClaudePath  $LauncherClaudePath  `
+        -TabTitle    $LauncherTabTitle    `
+        -TabColor    $LauncherTabColor    `
+        -ExtraDirs   $LauncherExtraDirs
+
+    Write-Host ""
+    Write-Host "  open-claude.ps1 generated successfully" -ForegroundColor Green
+    Write-Host "  Output: $LauncherOutputPath"            -ForegroundColor Cyan
 }
 
 # ---------------------------------------------------------------------------
