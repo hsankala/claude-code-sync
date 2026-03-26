@@ -98,7 +98,7 @@ function Get-YamlListSection {
             if ($Line -match '^[a-zA-Z_]') { break }
             # List item — strip inline comments and trailing whitespace
             if ($Line -match '^\s+-\s+(.+)') {
-                $Value = $Matches[1] -replace '\s*#.*$', '' -replace '\s+$', ''
+                $Value = $Matches[1] -replace '\s+#.*$', '' -replace '\s+$', ''
                 if ($Value) { $Items.Add($Value) }
             }
         }
@@ -141,7 +141,7 @@ function Get-YamlNestedScalarValue {
             if ($Line -match '^[a-zA-Z_]') { break }
             # Match indented key: value — strip comments, whitespace, and surrounding quotes
             if ($Line -match "^\s+${Key}:\s*(.+)") {
-                $Value = $Matches[1] -replace '\s*#.*$', '' -replace '\s+$', ''
+                $Value = $Matches[1] -replace '\s+#.*$', '' -replace '\s+$', ''
                 $Value = $Value     -replace '^"(.*)"$', '$1' -replace "^'(.*)'$", '$1'
                 return $Value
             }
@@ -174,7 +174,7 @@ function Get-YamlNestedListSection {
             if ($InsideSubSection) {
                 # List items are indented deeper than the sub-section header (4+ spaces)
                 if ($Line -match '^\s{4,}-\s+(.+)') {
-                    $Value = $Matches[1] -replace '\s*#.*$', '' -replace '\s+$', ''
+                    $Value = $Matches[1] -replace '\s+#.*$', '' -replace '\s+$', ''
                     if ($Value) { $Items.Add($Value) }
                 }
                 # Any other non-blank indented line is a sibling key — end sub-section
