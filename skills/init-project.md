@@ -216,7 +216,73 @@ claude_md:
 
 ---
 
-## STEP 5: Summary
+## STEP 5: VS Code Task Buttons
+
+Create `.vscode/tasks.json` with the two standard tasks. Read `script_path_ps1` from
+`tools/claude-code-sync.yaml` for the sync script path (typically `tools/sync-claude-code.ps1`).
+
+```json
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Open Claude",
+      "type": "shell",
+      "command": "pwsh.exe -File tools/open-claude.ps1",
+      "presentation": {
+        "panel": "new",
+        "focus": true,
+        "reveal": "always"
+      }
+    },
+    {
+      "label": "Generate Docs",
+      "type": "shell",
+      "command": "pwsh.exe -File {script_path_ps1}",
+      "presentation": {
+        "panel": "shared",
+        "reveal": "always"
+      }
+    }
+  ]
+}
+```
+
+Then add the VsCodeTaskButtons settings. Where they go depends on how the project is opened:
+
+**If a `.code-workspace` file exists in the project root** — add to its `settings` block.
+VS Code reads workspace settings from the workspace file, not from `.vscode/settings.json`,
+when a project is opened via a workspace file. Writing to `.vscode/settings.json` will have
+no effect in this case.
+
+```json
+"settings": {
+  "VsCodeTaskButtons.showCounter": true,
+  "VsCodeTaskButtons.tasks": [
+    {
+      "label": "$(rocket) Open Claude",
+      "task": "Open Claude",
+      "tooltip": "Launch Claude Code",
+      "alignment": "left"
+    },
+    {
+      "label": "$(book) Generate Docs",
+      "task": "Generate Docs",
+      "tooltip": "Run the sync script and regenerate AI context docs",
+      "alignment": "left"
+    }
+  ]
+}
+```
+
+**If no `.code-workspace` file exists** — create `.vscode/settings.json` with the same
+VsCodeTaskButtons block.
+
+The `task` field in each button must exactly match the `label` in `tasks.json`.
+
+---
+
+## STEP 6: Summary
 
 ```
 ╔══════════════════════════════════════════════════════╗
@@ -230,6 +296,7 @@ claude_md:
    ai-docs/about-{project-name}.md   (placeholder — fill in later)
    tools/sync-claude-code.{ext}      (downloaded from GitHub)
    tools/claude-code-sync.yaml       (configured and ready)
+   .vscode/tasks.json                (Open Claude + Generate Docs tasks)
 
 🚀 Next steps:
    1. Fill in ai-docs/about-{project-name}.md with project context

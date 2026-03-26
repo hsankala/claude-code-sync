@@ -1,0 +1,24 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Open Claude",
+      "type": "shell",
+      "command": "pwsh.exe -File tools/open-claude.ps1",
+      "presentation": {
+        "panel": "new",
+        "focus": true,
+        "reveal": "always"
+      }
+    },
+    {
+      "label": "Generate Docs",
+      "type": "shell",
+      "command": "pwsh.exe -File tools/sync-claude-code.ps1",
+      "presentation": {
+        "panel": "shared",
+        "reveal": "always"
+      }
+    }
+  ]
+}

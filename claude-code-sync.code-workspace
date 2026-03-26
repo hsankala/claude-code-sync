@@ -4,5 +4,21 @@
 			"path": "."
 		}
 	],
-	"settings": {}
+	"settings": {
+		"VsCodeTaskButtons.showCounter": true,
+		"VsCodeTaskButtons.tasks": [
+			{
+				"label": "$(rocket) Open Claude",
+				"task": "Open Claude",
+				"tooltip": "Launch Claude Code",
+				"alignment": "left"
+			},
+			{
+				"label": "$(book) Generate Docs",
+				"task": "Generate Docs",
+				"tooltip": "Run the sync script and regenerate AI context docs",
+				"alignment": "left"
+			}
+		]
+	}
 }
