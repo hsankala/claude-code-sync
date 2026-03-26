@@ -1,4 +1,4 @@
-﻿﻿#Requires -Version 5.1
+#Requires -Version 5.1
 <#
 .SYNOPSIS
     Assembles CLAUDE.md, web-ai-doc.md, and syncs Claude Code skills from claude-code-sync.yaml.
@@ -219,6 +219,40 @@ function Invoke-RemoteFetch {
 }
 
 # ---------------------------------------------------------------------------
+# Remove leading BOM character (U+FEFF) from a string
+#
+# Background: UTF-8 files created or edited on Windows often start with a BOM
+# byte sequence (EF BB BF). When read into a .NET string this becomes the Unicode
+# character U+FEFF at position 0 of the content string.
+#
+# Problem: [System.IO.File]::WriteAllText with [System.Text.Encoding]::UTF8 also
+# prepends its own EF BB BF preamble. If the content string already starts with
+# U+FEFF, the two combine into a double BOM in the output file:
+#
+#   [encoding preamble: EF BB BF] + [content BOM char: EF BB BF] + rest of file
+#
+# This breaks PowerShell scripts (#Requires directive is no longer at byte 0),
+# corrupts Markdown files, and causes git to report a diff on every sync run
+# because the file is rewritten with a fresh double BOM each time.
+#
+# Fix applied here (both parts required):
+#   1. Strip U+FEFF from all content strings before writing  <- this function
+#   2. Use [System.Text.UTF8Encoding]::new($false) for all WriteAllText calls
+#      so the encoding layer never prepends its own preamble
+#
+# If this ever needs revisiting: check whether source files have gained a BOM
+# (Windows editors -- Notepad, VS Code with default Windows settings, PowerShell
+# ISE -- all write BOM by default). Verify WriteAllText calls use the no-BOM
+# constructor. The TrimStart below handles multiple leading BOMs in one pass.
+# ---------------------------------------------------------------------------
+function Remove-LeadingBom {
+    param([string]$Content)
+    # U+FEFF is the BOM codepoint. TrimStart strips all leading occurrences,
+    # which handles the rare case where a double BOM is baked into source content.
+    return $Content.TrimStart([char]0xFEFF)
+}
+
+# ---------------------------------------------------------------------------
 # Read a single doc entry — remote URL, relative path, or ai-docs/ filename
 # ---------------------------------------------------------------------------
 function Read-DocEntry {
@@ -228,8 +262,8 @@ function Read-DocEntry {
     )
 
     if ($Entry -match '^https?://') {
-        # Remote — fetch via HTTP
-        return Invoke-RemoteFetch -Url $Entry
+        # Remote — fetch via HTTP, strip any leading BOM before returning
+        return Remove-LeadingBom (Invoke-RemoteFetch -Url $Entry)
     }
     elseif ($Entry -match '[/\\]') {
         # Contains path separator — resolve relative to project root
@@ -239,7 +273,7 @@ function Read-DocEntry {
             exit 1
         }
         Write-StepInfo "Reading: $Entry"
-        return Get-Content -Path $FullPath -Raw -Encoding UTF8
+        return Remove-LeadingBom (Get-Content -Path $FullPath -Raw -Encoding UTF8)
     }
     else {
         # Plain filename — look up in local docs directory
@@ -250,7 +284,7 @@ function Read-DocEntry {
             exit 1
         }
         Write-StepInfo "Reading: $Entry"
-        return Get-Content -Path $FullPath -Raw -Encoding UTF8
+        return Remove-LeadingBom (Get-Content -Path $FullPath -Raw -Encoding UTF8)
     }
 }
 
@@ -296,7 +330,8 @@ function Invoke-DocAssembly {
 $($IncludedEntries | ForEach-Object { "- $_" } | Out-String)
 "@
 
-    [System.IO.File]::WriteAllText($OutputPath, $FullContent + $Summary, [System.Text.Encoding]::UTF8)
+    # UTF8Encoding($false) = no BOM preamble — see Remove-LeadingBom for full context
+    [System.IO.File]::WriteAllText($OutputPath, $FullContent + $Summary, [System.Text.UTF8Encoding]::new($false))
 
     return , $IncludedEntries.ToArray()
 }
@@ -321,7 +356,8 @@ function Invoke-SkillsSync {
         $Content   = Read-DocEntry -Entry $Entry -LocalDocsDir $LocalDocsDir
         $FileName  = Split-Path -Leaf $Entry
         $DestPath  = Join-Path $SkillsOutputDir $FileName
-        [System.IO.File]::WriteAllText($DestPath, $Content, [System.Text.Encoding]::UTF8)
+        # UTF8Encoding($false) = no BOM preamble — see Remove-LeadingBom for full context
+        [System.IO.File]::WriteAllText($DestPath, $Content, [System.Text.UTF8Encoding]::new($false))
         Write-StepSuccess "Synced skill: $FileName -> $DestPath"
         $SyncedSkills.Add($FileName)
     }
@@ -379,7 +415,8 @@ function Open-ClaudeCode {
 Open-ClaudeCode
 "@
 
-    [System.IO.File]::WriteAllText($LauncherOutputPath, $LauncherContent, [System.Text.Encoding]::UTF8)
+    # UTF8Encoding($false) = no BOM preamble — see Remove-LeadingBom for full context
+    [System.IO.File]::WriteAllText($LauncherOutputPath, $LauncherContent, [System.Text.UTF8Encoding]::new($false))
 
     return $LauncherOutputPath
 }
@@ -463,7 +500,12 @@ else {
     }
     else {
         Write-StepInfo "Update found — overwriting script"
-        [System.IO.File]::WriteAllText($MyInvocation.MyCommand.Path, $RemoteContent, [System.Text.Encoding]::UTF8)
+        # Strip any leading BOM from remote content before writing. GitHub may serve
+        # files with a BOM if the committer's editor added one. Combined with the
+        # no-BOM encoding constructor this guarantees the written file is BOM-free.
+        # See Remove-LeadingBom for full context on why this matters.
+        $CleanRemoteContent = Remove-LeadingBom $RemoteContent
+        [System.IO.File]::WriteAllText($MyInvocation.MyCommand.Path, $CleanRemoteContent, [System.Text.UTF8Encoding]::new($false))
         Write-StepSuccess "Script updated successfully"
         Write-Host ""
         Write-Host "  Script has been updated. Please rerun to continue with the latest version." -ForegroundColor Yellow
