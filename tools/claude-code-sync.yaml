@@ -16,9 +16,10 @@ script_path_sh:  tools/sync-claude-code.sh
 # Remove this section if you don't want a launcher generated.
 # --------------------------------------------------------------------------
 launcher:
+  mode:          wsl                                        # wsl (default) or ssh
   wsl_distro:    WordPress_Dev                              # WSL instance name (wsl -l to list)
   project_path:  /mnt/c/tools/claude-code-sync             # Absolute path inside WSL
-  claude_path:   /home/hefin/.local/bin/claude              # Full path to claude executable
+  claude_path:   /home/hefin/.local/bin/claude             # Full path to claude executable
   tab_title:     CLAUDE CODE - CLAUDE-CODE-SYNC            # Windows Terminal tab title
   tab_color:     "#002B36"                                  # Windows Terminal tab colour (hex)
   extra_dirs:                                               # Additional --add-dir paths (optional)
