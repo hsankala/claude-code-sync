@@ -499,7 +499,7 @@ $SkillsEntries   = Get-YamlListSection -Lines $YamlLines -SectionName 'skills'
 
 Write-StepInfo "claude_md entries:  $($ClaudeMdEntries.Count)"
 Write-StepInfo "web_ai_doc entries: $($WebAiDocEntries.Count)"
-Write-StepInfo "skills entries:     $($SkillsEntries.Count)"
+Write-StepInfo "skills to sync:     $($SkillsEntries.Count)"
 Write-StepInfo "Local docs dir:     $LocalDocsDir"
 if ($GitHubBaseUrl) { Write-StepInfo "GitHub base URL:    $GitHubBaseUrl" }
 
@@ -605,7 +605,7 @@ if ($SkillsEntries.Count -gt 0) {
     Write-Host "  Synced:  $($SyncedSkills.Count) skill(s)" -ForegroundColor Yellow
 }
 else {
-    Write-StepSkipped "No skills entries in config — skipping"
+    Write-StepSkipped "No skills in config — skipping"
 }
 
 # ---------------------------------------------------------------------------
