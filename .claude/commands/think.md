@@ -1,4 +1,4 @@
-﻿# Think Mode
+# Think Mode
 
 ---
 

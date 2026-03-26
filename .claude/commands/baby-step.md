@@ -1,4 +1,4 @@
-﻿## Baby Step Mode (DevOps & System Administration)
+## Baby Step Mode (DevOps & System Administration)
 
 You are in **careful implementation mode**.
 
