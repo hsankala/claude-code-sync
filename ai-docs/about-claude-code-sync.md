@@ -160,3 +160,39 @@ If you are a Claude Code instance working on this repo, here is the lay of the l
 
 The developer runs the PowerShell script on Windows and the Bash script in WSL/Linux.
 Both environments are in active use. Changes to one script should be reflected in the other.
+
+---
+
+## ⚠️ Critical: Sync Script Changes Must Be Committed and Pushed Before Running
+
+```
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃  ⚠️  SYNC SCRIPT CHANGE DETECTED                                       ┃
+┃                                                                        ┃
+┃  You have just modified sync-claude-code.ps1 or sync-claude-code.sh.  ┃
+┃                                                                        ┃
+┃  The sync script's self-update step fetches the latest version from   ┃
+┃  GitHub and overwrites the local file if the hashes differ.           ┃
+┃                                                                        ┃
+┃  If you run the sync script before pushing, your changes will be      ┃
+┃  silently destroyed.                                                   ┃
+┃                                                                        ┃
+┃  Required steps — in this order, no exceptions:                       ┃
+┃                                                                        ┃
+┃    1. Review the changes                                               ┃
+┃    2. Commit                                                           ┃
+┃    3. Push to GitHub                                                   ┃
+┃    4. Then run the sync script                                         ┃
+┃                                                                        ┃
+┃  Do not run the sync script until the push is confirmed.              ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+```
+
+**This applies every single time, without exception.** There is no case where it is safe to run
+the sync script immediately after modifying it. The self-update will fetch from GitHub, compare
+hashes, find a mismatch, overwrite the file, and exit — taking your local changes with it.
+
+**Claude Code's responsibility:** Any time changes are made to `sync-claude-code.ps1` or
+`sync-claude-code.sh`, output this warning immediately after completing the edit. Do not wait
+to be asked. Do not proceed to the next task. Surface the warning and wait for the operator to
+confirm the push has been done before running or suggesting to run the sync script.

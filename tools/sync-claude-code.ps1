@@ -413,11 +413,15 @@ Open-ClaudeCode
 "@
     }
     else {
-        # WSL mode (default) — open a Windows Terminal tab inside the specified WSL distro.
+        # WSL mode (default) — open a Windows Terminal tab via the WSL layer.
         $ExtraDirArgs = ''
         foreach ($Dir in $ExtraDirs) {
             $ExtraDirArgs += " --add-dir $Dir"
         }
+
+        # Build the distro argument — omit -d flag if wsl_distro is not set, which
+        # causes wsl to use the default distro rather than a named one.
+        $DistroArg = if ($WslDistro) { "-d $WslDistro " } else { "" }
 
         $LauncherContent = @"
 # open-claude.ps1
@@ -434,7 +438,7 @@ function Open-ClaudeCode {
     # To update: open WSL, run: type claude
     # Copy the path and update claude_path in claude-code-sync.yaml, then resync.
 
-    `$WslCommand = "wsl -d $WslDistro -e bash -c 'cd $ProjectPath && $ClaudePath$ExtraDirArgs'"
+    `$WslCommand = "wsl ${DistroArg}-e bash -c 'cd $ProjectPath && $ClaudePath$ExtraDirArgs'"
 
     `$WindowsTerminalPath = "`$env:LOCALAPPDATA\Microsoft\WindowsApps\wt.exe"
     & `$WindowsTerminalPath -w 0 new-tab --title "$TabTitle" --tabColor "$TabColor" pwsh.exe -NoExit -Command `$WslCommand
@@ -621,7 +625,7 @@ $LauncherExtraDirs   = Get-YamlNestedListSection  -Lines $YamlLines -SectionName
 # Default mode to 'wsl' for backwards compatibility with configs that omit the mode key
 if (-not $LauncherMode) { $LauncherMode = 'wsl' }
 
-$NoLauncher = ($LauncherMode -eq 'wsl' -and -not $LauncherWslDistro) -or
+$NoLauncher = ($LauncherMode -eq 'wsl' -and -not $LauncherProjectPath) -or
               ($LauncherMode -eq 'ssh' -and -not $LauncherSshHost)
 
 if ($NoLauncher) {
@@ -632,7 +636,8 @@ else {
     if ($LauncherMode -eq 'ssh') {
         Write-StepInfo "SSH host:     $LauncherSshHost"
     } else {
-        Write-StepInfo "WSL distro:   $LauncherWslDistro"
+        $DistroDisplay = if ($LauncherWslDistro) { $LauncherWslDistro } else { "(default)" }
+        Write-StepInfo "WSL distro:   $DistroDisplay"
     }
     Write-StepInfo "Project path: $LauncherProjectPath"
     Write-StepInfo "Claude path:  $LauncherClaudePath"
