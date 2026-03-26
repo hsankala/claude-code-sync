@@ -14,6 +14,24 @@ script_path_ps1: tools/sync-claude-code.ps1
 script_path_sh:  tools/sync-claude-code.sh
 
 # --------------------------------------------------------------------------
+# Launcher — generates open-claude.ps1 to open Claude Code in a new
+# Windows Terminal tab. Remove this section if you don't want a launcher.
+#
+# mode: wsl  — local project inside WSL (default if mode is omitted)
+# mode: ssh  — remote project on a Linux server
+# --------------------------------------------------------------------------
+# launcher:
+#   mode:          wsl
+#   wsl_distro:    Ubuntu                        # wsl mode: WSL instance (wsl -l to list)
+#   # ssh_host:    user@192.168.1.1              # ssh mode: user@host or IP
+#   project_path:  /home/user/my-project         # absolute path on the target machine
+#   claude_path:   /home/user/.local/bin/claude  # full path to claude executable
+#   tab_title:     MY-PROJECT                    # Windows Terminal tab title
+#   tab_color:     "#002B36"                     # Windows Terminal tab colour (hex)
+#   extra_dirs:                                  # wsl mode only: additional --add-dir paths
+#     - /mnt/c/Users/user/Documents/Screenshots
+
+# --------------------------------------------------------------------------
 # CLAUDE.md — full memory file for Claude Code
 # Includes everything: project-specific docs, shared guidelines, tooling docs
 # --------------------------------------------------------------------------
