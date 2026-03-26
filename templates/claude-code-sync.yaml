@@ -16,34 +16,45 @@ script_path_sh:  tools/sync-claude-code.sh
 # --------------------------------------------------------------------------
 # Launcher — generates open-claude.ps1 to open Claude Code in a new
 # Windows Terminal tab. Remove this section if you don't want a launcher.
-#
-# mode: wsl  — local project inside WSL (default if mode is omitted)
-# mode: ssh  — remote project on a Linux server
+# Two modes: wsl (local WSL project) or ssh (remote Linux server).
+# Uncomment one block below and fill in your values.
 # --------------------------------------------------------------------------
+
+# WSL mode — connects via the local WSL layer on this Windows machine:
 # launcher:
 #   mode:          wsl
-#   wsl_distro:    Ubuntu                        # wsl mode: WSL instance (wsl -l to list)
-#   # ssh_host:    user@192.168.1.1              # ssh mode: user@host or IP
-#   project_path:  /home/user/my-project         # absolute path on the target machine
+#   project_path:  /home/user/my-project         # absolute path inside WSL
 #   claude_path:   /home/user/.local/bin/claude  # full path to claude executable
 #   tab_title:     MY-PROJECT                    # Windows Terminal tab title
 #   tab_color:     "#002B36"                     # Windows Terminal tab colour (hex)
-#   extra_dirs:                                  # wsl mode only: additional --add-dir paths
+#   # wsl_distro:  Ubuntu                        # optional: omit to use the default WSL distro
+#   extra_dirs:                                  # optional: additional --add-dir paths
 #     - /mnt/c/Users/user/Documents/Screenshots
+
+# SSH mode — remote project on a Linux server:
+# launcher:
+#   mode:          ssh
+#   ssh_host:      user@192.168.1.1              # user@host or IP
+#   project_path:  /home/user/my-project         # absolute path on the remote host
+#   claude_path:   /home/user/.local/bin/claude  # full path to claude executable
+#   tab_title:     MY-PROJECT                    # Windows Terminal tab title
+#   tab_color:     "#002B36"                     # Windows Terminal tab colour (hex)
 
 # --------------------------------------------------------------------------
 # CLAUDE.md — full memory file for Claude Code
 # Includes everything: project-specific docs, shared guidelines, tooling docs
 # --------------------------------------------------------------------------
 claude_md:
-  # Project-specific local docs (add your own here):
-  # - about-my-project.md
-  # - project-architecture.md
+  # Project-specific local doc — rename to match your project:
+  - about-my-project.md
 
   # Shared docs from claude-code-sync:
-  - https://raw.githubusercontent.com/hefin/claude-code-sync/main/docs/code-comments.md
-  - https://raw.githubusercontent.com/hefin/claude-code-sync/main/docs/tool-execution.md
-  - https://raw.githubusercontent.com/hefin/claude-code-sync/main/docs/claude-git-usage.md
+  - https://raw.githubusercontent.com/hsankala/claude-code-sync/main/ai-doc-library/speech-to-text.md
+  - https://raw.githubusercontent.com/hsankala/claude-code-sync/main/ai-doc-library/chat-guidelines.md
+  - https://raw.githubusercontent.com/hsankala/claude-code-sync/main/ai-doc-library/chat-response-style-guide.md
+  - https://raw.githubusercontent.com/hsankala/claude-code-sync/main/ai-doc-library/chat-session-banners.md
+  - https://raw.githubusercontent.com/hsankala/claude-code-sync/main/ai-doc-library/tool-transparency.md
+  - https://raw.githubusercontent.com/hsankala/claude-code-sync/main/ai-doc-library/claude-git-usage-windows.md
 
 # --------------------------------------------------------------------------
 # Web AI doc — subset for sharing with web-based AI assistants
@@ -56,5 +67,9 @@ web_ai_doc:
 # --------------------------------------------------------------------------
 # Skills — Claude Code slash commands synced to .claude/commands/
 # --------------------------------------------------------------------------
-skills: []
-  # - https://raw.githubusercontent.com/hefin/claude-code-sync/main/skills/refactor.md
+skills:
+  - https://raw.githubusercontent.com/hsankala/claude-code-sync/main/skills/baby-step.md
+  - https://raw.githubusercontent.com/hsankala/claude-code-sync/main/skills/commit.md
+  - https://raw.githubusercontent.com/hsankala/claude-code-sync/main/skills/init-project.md
+  - https://raw.githubusercontent.com/hsankala/claude-code-sync/main/skills/summary.md
+  - https://raw.githubusercontent.com/hsankala/claude-code-sync/main/skills/think.md
