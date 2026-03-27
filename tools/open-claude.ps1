@@ -15,7 +15,7 @@ function Open-ClaudeCode {
     $WslCommand = "wsl -d WordPress_Dev -e bash -c 'cd /mnt/c/tools/claude-code-sync && /home/hefin/.local/bin/claude --add-dir /mnt/c/Users/hsank/Documents/ShareX/Screenshots'"
 
     $WindowsTerminalPath = "$env:LOCALAPPDATA\Microsoft\WindowsApps\wt.exe"
-    & $WindowsTerminalPath -w 0 new-tab --title "CLAUDE CODE - CLAUDE-CODE-SYNC" --tabColor "#002B36" pwsh.exe -NoExit -Command $WslCommand
+    & $WindowsTerminalPath -w 0 new-tab --title "CLAUDE-CODE-SYNC" --tabColor "#002B36" pwsh.exe -NoExit -Command $WslCommand
 }
 
 Open-ClaudeCode

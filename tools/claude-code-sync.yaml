@@ -18,9 +18,9 @@ script_path_sh:  tools/sync-claude-code.sh
 launcher:
   mode:          wsl                                        # wsl (default) or ssh
   wsl_distro:    WordPress_Dev                              # WSL instance name (wsl -l to list)
-  project_path:  /mnt/c/tools/claude-code-sync             # Absolute path inside WSL
-  claude_path:   /home/hefin/.local/bin/claude             # Full path to claude executable
-  tab_title:     CLAUDE CODE - CLAUDE-CODE-SYNC            # Windows Terminal tab title
+  project_path:  /mnt/c/tools/claude-code-sync              # Absolute path inside WSL
+  claude_path:   /home/hefin/.local/bin/claude              # Full path to claude executable
+  tab_title:     CLAUDE-CODE-SYNC                           # Windows Terminal tab title
   tab_color:     "#002B36"                                  # Windows Terminal tab colour (hex)
   extra_dirs:                                               # Additional --add-dir paths (optional)
     - /mnt/c/Users/hsank/Documents/ShareX/Screenshots
@@ -42,7 +42,7 @@ claude_md:
 # Web AI doc — subset for sharing with web-based AI assistants
 # Excludes tooling-specific and Claude Code-specific docs
 # --------------------------------------------------------------------------
-web_ai_doc_filename: web-ai-doc.md
+web_ai_doc_filename: CLAUDE-WEB-AI.md
 web_ai_doc:
   - about-claude-code-sync.md
 
