@@ -32,7 +32,8 @@ launcher:
 # --------------------------------------------------------------------------
 claude_md:
   - about-claude-code-sync.md
-  - project-structure.md
+  - directory-guide.md
+  - file-tree.md
   - https://raw.githubusercontent.com/hsankala/claude-code-sync/main/ai-doc-library/coding-conventions.md
   - https://raw.githubusercontent.com/hsankala/claude-code-sync/main/ai-doc-library/code-comments.md
   - https://raw.githubusercontent.com/hsankala/claude-code-sync/main/ai-doc-library/speech-to-text.md
@@ -51,6 +52,8 @@ claude_md:
 web_ai_doc_filename: CLAUDE-WEB-AI.md
 web_ai_doc:
   - about-claude-code-sync.md
+  - directory-guide.md
+  - file-tree.md
 
 # --------------------------------------------------------------------------
 # Skills — synced to .claude/commands/

@@ -553,7 +553,7 @@ else {
 }
 
 # ---------------------------------------------------------------------------
-# Generate project structure map (eza tree -> ai-docs/project-structure.md)
+# Generate project structure map (eza tree -> ai-docs/file-tree.md)
 # ---------------------------------------------------------------------------
 Write-SectionHeader "Generating Project Structure Map"
 
@@ -586,7 +586,7 @@ else {
             $EzaCmd      = "eza --tree --level=2 --group-directories-first --ignore-glob='node_modules|vendor|.git|storage|cache' --color=never"
             $Fence       = '```'
             $Lines       = @(
-                '## Project Structure',
+                '## File Tree',
                 '',
                 "Generated: $Timestamp — regenerated each session, high confidence this is accurate.",
                 "Command: ``$EzaCmd``",
@@ -597,7 +597,7 @@ else {
                 $Fence
             )
             $StructureContent    = $Lines -join "`n"
-            $StructureOutputPath = Join-Path $LocalDocsDir 'project-structure.md'
+            $StructureOutputPath = Join-Path $LocalDocsDir 'file-tree.md'
             [System.IO.File]::WriteAllText($StructureOutputPath, $StructureContent, [System.Text.UTF8Encoding]::new($false))
             Write-StepSuccess "Written: $StructureOutputPath"
         }

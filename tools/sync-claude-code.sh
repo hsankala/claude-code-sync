@@ -371,7 +371,7 @@ else
 fi
 
 # ---------------------------------------------------------------------------
-# Generate project structure map (eza tree -> ai-docs/project-structure.md)
+# Generate project structure map (eza tree -> ai-docs/file-tree.md)
 # ---------------------------------------------------------------------------
 write_section_header "Generating Project Structure Map"
 
@@ -380,7 +380,7 @@ if [[ "$STRUCTURE_MAP" != "true" ]]; then
 elif ! command -v eza &>/dev/null; then
     write_step_warning "eza not found — skipping structure map (install with: cargo install eza)"
 else
-    structure_output_path="$LOCAL_DOCS_DIR/project-structure.md"
+    structure_output_path="$LOCAL_DOCS_DIR/file-tree.md"
     eza_output=$(cd "$PROJECT_ROOT" && eza --tree --level=2 --group-directories-first \
         "--ignore-glob=node_modules|vendor|.git|storage|cache" --color=never 2>&1)
 
@@ -389,7 +389,7 @@ else
     else
         timestamp=$(date '+%Y-%m-%d %H:%M:%S')
         {
-            printf '## Project Structure\n\n'
+            printf '## File Tree\n\n'
             printf 'Generated: %s — regenerated each session, high confidence this is accurate.\n' "$timestamp"
             printf "Command: \`eza --tree --level=2 --group-directories-first --ignore-glob='node_modules|vendor|.git|storage|cache' --color=never\`\n"
             printf 'Excludes: node_modules, vendor, .git, storage, cache. Depth: 2 levels.\n\n'
