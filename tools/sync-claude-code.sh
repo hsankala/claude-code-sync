@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # sync-claude-code.sh
-# Assembles CLAUDE.md, web-ai-doc.md, and syncs Claude Code skills from claude-code-sync.yaml.
+# Assembles CLAUDE.md, CLAUDE-WEB-AI.md, and syncs Claude Code skills from claude-code-sync.yaml.
 #
 # Usage: ./sync-claude-code.sh [-Config <config-filename>]
 #   -Config   Name of the config file to use (must be in the same directory as this script).
@@ -309,7 +309,7 @@ fi
 
 WEB_AI_DOC_FILENAME=$(get_yaml_scalar_value 'web_ai_doc_filename' "$CONFIG_FILE_PATH")
 if [[ -z "$WEB_AI_DOC_FILENAME" ]]; then
-    WEB_AI_DOC_FILENAME='web-ai-doc.md'
+    WEB_AI_DOC_FILENAME='CLAUDE-WEB-AI.md'
 fi
 WEB_AI_DOC_OUTPUT_PATH="$PROJECT_ROOT/$WEB_AI_DOC_FILENAME"
 

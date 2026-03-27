@@ -1,7 +1,7 @@
 #Requires -Version 5.1
 <#
 .SYNOPSIS
-    Assembles CLAUDE.md, web-ai-doc.md, and syncs Claude Code skills from claude-code-sync.yaml.
+    Assembles CLAUDE.md, CLAUDE-WEB-AI.md, and syncs Claude Code skills from claude-code-sync.yaml.
 
 .DESCRIPTION
     Reads claude-code-sync.yaml (alongside this script), fetches remote docs via HTTP,
@@ -490,7 +490,7 @@ $LocalDocsDir = if ($LocalDocsOverride) { Join-Path $ProjectRoot $LocalDocsOverr
 
 # Resolve web AI doc output filename
 $WebAiDocFilename   = Get-YamlScalarValue -Lines $YamlLines -Key 'web_ai_doc_filename'
-if (-not $WebAiDocFilename) { $WebAiDocFilename = 'web-ai-doc.md' }
+if (-not $WebAiDocFilename) { $WebAiDocFilename = 'CLAUDE-WEB-AI.md' }
 $WebAiDocOutputPath = Join-Path $ProjectRoot $WebAiDocFilename
 
 $DisableSelfUpdate = Get-YamlScalarValue -Lines $YamlLines -Key 'disable_self_update'

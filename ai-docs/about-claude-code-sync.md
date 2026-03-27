@@ -78,7 +78,7 @@ Two versions exist: `sync-claude-code.ps1` (PowerShell, Windows) and `sync-claud
    GitHub, drops it in, and exits asking the user to edit it and rerun.
 
 3. **Doc assembly** — reads the YAML config, fetches or reads each entry, stitches them
-   together with separators, writes `CLAUDE.md` (and optionally `web-ai-doc.md`).
+   together with separators, writes `CLAUDE.md` (and optionally `CLAUDE-WEB-AI.md`).
 
 4. **Skills sync** — fetches or reads each skill entry, writes to `.claude/commands/`.
 
