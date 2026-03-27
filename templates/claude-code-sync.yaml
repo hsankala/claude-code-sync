@@ -13,6 +13,7 @@ github_base_url:     https://raw.githubusercontent.com/hsankala/claude-code-sync
 script_path_ps1:     tools/sync-claude-code.ps1
 script_path_sh:      tools/sync-claude-code.sh
 disable_self_update: false  # set to true to skip the self-update check (useful during active script development)
+structure_map:       true   # generates ai-docs/project-structure.md (eza tree, level 2) on each sync
 
 # --------------------------------------------------------------------------
 # Launcher — generates open-claude.ps1 to open Claude Code in a new

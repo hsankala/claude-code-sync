@@ -10,6 +10,7 @@ github_base_url:     https://raw.githubusercontent.com/hsankala/claude-code-sync
 script_path_ps1:     tools/sync-claude-code.ps1
 script_path_sh:      tools/sync-claude-code.sh
 disable_self_update: true
+structure_map:       true
 
 # --------------------------------------------------------------------------
 # Launcher — generates tools/open-claude.ps1 to open Claude Code in a new
@@ -31,6 +32,7 @@ launcher:
 # --------------------------------------------------------------------------
 claude_md:
   - about-claude-code-sync.md
+  - project-structure.md
   - https://raw.githubusercontent.com/hsankala/claude-code-sync/main/ai-doc-library/speech-to-text.md
   - https://raw.githubusercontent.com/hsankala/claude-code-sync/main/ai-doc-library/chat-guidelines.md
   - https://raw.githubusercontent.com/hsankala/claude-code-sync/main/ai-doc-library/chat-response-style-guide.md

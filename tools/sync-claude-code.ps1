@@ -494,6 +494,7 @@ if (-not $WebAiDocFilename) { $WebAiDocFilename = 'web-ai-doc.md' }
 $WebAiDocOutputPath = Join-Path $ProjectRoot $WebAiDocFilename
 
 $DisableSelfUpdate = Get-YamlScalarValue -Lines $YamlLines -Key 'disable_self_update'
+$StructureMap      = Get-YamlScalarValue -Lines $YamlLines -Key 'structure_map'
 $ClaudeMdEntries   = Get-YamlListSection -Lines $YamlLines -SectionName 'claude_md'
 $WebAiDocEntries   = Get-YamlListSection -Lines $YamlLines -SectionName 'web_ai_doc'
 $SkillsEntries     = Get-YamlListSection -Lines $YamlLines -SectionName 'skills'
@@ -548,6 +549,61 @@ else {
         Write-Host "  Script has been updated. Please rerun to continue with the latest version." -ForegroundColor Yellow
         Write-Host ""
         exit 0
+    }
+}
+
+# ---------------------------------------------------------------------------
+# Generate project structure map (eza tree -> ai-docs/project-structure.md)
+# ---------------------------------------------------------------------------
+Write-SectionHeader "Generating Project Structure Map"
+
+if ($StructureMap -ne 'true') {
+    Write-StepSkipped "structure_map not enabled in config — skipping"
+}
+elseif (-not (Get-Command wsl -ErrorAction SilentlyContinue)) {
+    Write-StepWarning "wsl not found — skipping structure map"
+}
+else {
+    try {
+        # Convert Windows project root to WSL path: C:\foo\bar -> /mnt/c/foo/bar
+        $WslProjectRoot = '/mnt/' + $ProjectRoot[0].ToString().ToLower() + ($ProjectRoot.Substring(2).Replace('\', '/'))
+        $IgnoreGlob     = 'node_modules|vendor|.git|storage|cache'
+        $BashCmd        = "cd '$WslProjectRoot' && eza --tree --level=2 --group-directories-first --ignore-glob='$IgnoreGlob' --color=never"
+
+        # WSL outputs UTF-8 but PowerShell defaults to the OEM code page — switch
+        # encoding around the call so box-drawing characters survive the round-trip.
+        $PrevEncoding               = [Console]::OutputEncoding
+        [Console]::OutputEncoding   = [System.Text.Encoding]::UTF8
+        $EzaOutput                  = wsl bash -c $BashCmd 2>&1
+        [Console]::OutputEncoding   = $PrevEncoding
+
+        if ($LASTEXITCODE -ne 0) {
+            Write-StepWarning "eza command failed (exit $LASTEXITCODE) — skipping structure map"
+            Write-StepWarning "Ensure eza is installed in WSL: cargo install eza"
+        }
+        else {
+            $Timestamp   = Get-Date -Format 'yyyy-MM-dd HH:mm:ss'
+            $EzaCmd      = "eza --tree --level=2 --group-directories-first --ignore-glob='node_modules|vendor|.git|storage|cache' --color=never"
+            $Fence       = '```'
+            $Lines       = @(
+                '## Project Structure',
+                '',
+                "Generated: $Timestamp — regenerated each session, high confidence this is accurate.",
+                "Command: ``$EzaCmd``",
+                'Excludes: node_modules, vendor, .git, storage, cache. Depth: 2 levels.',
+                '',
+                $Fence,
+                ($EzaOutput -join "`n"),
+                $Fence
+            )
+            $StructureContent    = $Lines -join "`n"
+            $StructureOutputPath = Join-Path $LocalDocsDir 'project-structure.md'
+            [System.IO.File]::WriteAllText($StructureOutputPath, $StructureContent, [System.Text.UTF8Encoding]::new($false))
+            Write-StepSuccess "Written: $StructureOutputPath"
+        }
+    }
+    catch {
+        Write-StepWarning "Failed to generate structure map: $_"
     }
 }
 

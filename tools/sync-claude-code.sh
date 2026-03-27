@@ -314,6 +314,7 @@ fi
 WEB_AI_DOC_OUTPUT_PATH="$PROJECT_ROOT/$WEB_AI_DOC_FILENAME"
 
 DISABLE_SELF_UPDATE=$(get_yaml_scalar_value 'disable_self_update' "$CONFIG_FILE_PATH")
+STRUCTURE_MAP=$(get_yaml_scalar_value 'structure_map' "$CONFIG_FILE_PATH")
 mapfile -t CLAUDE_MD_ENTRIES  < <(get_yaml_list_section 'claude_md' "$CONFIG_FILE_PATH")
 mapfile -t WEB_AI_DOC_ENTRIES < <(get_yaml_list_section 'web_ai_doc' "$CONFIG_FILE_PATH")
 mapfile -t SKILLS_ENTRIES     < <(get_yaml_list_section 'skills'     "$CONFIG_FILE_PATH")
@@ -366,6 +367,37 @@ else
         echo -e "${C_YELLOW}  Script has been updated. Please rerun to continue with the latest version.${C_RESET}" >&2
         echo ""                                                                                                    >&2
         exit 0
+    fi
+fi
+
+# ---------------------------------------------------------------------------
+# Generate project structure map (eza tree -> ai-docs/project-structure.md)
+# ---------------------------------------------------------------------------
+write_section_header "Generating Project Structure Map"
+
+if [[ "$STRUCTURE_MAP" != "true" ]]; then
+    write_step_skipped "structure_map not enabled in config — skipping"
+elif ! command -v eza &>/dev/null; then
+    write_step_warning "eza not found — skipping structure map (install with: cargo install eza)"
+else
+    structure_output_path="$LOCAL_DOCS_DIR/project-structure.md"
+    eza_output=$(cd "$PROJECT_ROOT" && eza --tree --level=2 --group-directories-first \
+        "--ignore-glob=node_modules|vendor|.git|storage|cache" --color=never 2>&1)
+
+    if [[ $? -ne 0 ]]; then
+        write_step_warning "eza command failed — skipping structure map"
+    else
+        timestamp=$(date '+%Y-%m-%d %H:%M:%S')
+        {
+            printf '## Project Structure\n\n'
+            printf 'Generated: %s — regenerated each session, high confidence this is accurate.\n' "$timestamp"
+            printf "Command: \`eza --tree --level=2 --group-directories-first --ignore-glob='node_modules|vendor|.git|storage|cache' --color=never\`\n"
+            printf 'Excludes: node_modules, vendor, .git, storage, cache. Depth: 2 levels.\n\n'
+            printf '```\n'
+            printf '%s\n' "$eza_output"
+            printf '```\n'
+        } > "$structure_output_path"
+        write_step_success "Written: $structure_output_path"
     fi
 fi
 
