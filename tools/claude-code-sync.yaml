@@ -33,6 +33,8 @@ launcher:
 claude_md:
   - about-claude-code-sync.md
   - project-structure.md
+  - ai-doc-library/coding-conventions.md
+  - ai-doc-library/code-comments.md
   - https://raw.githubusercontent.com/hsankala/claude-code-sync/main/ai-doc-library/speech-to-text.md
   - https://raw.githubusercontent.com/hsankala/claude-code-sync/main/ai-doc-library/chat-guidelines.md
   - https://raw.githubusercontent.com/hsankala/claude-code-sync/main/ai-doc-library/chat-response-style-guide.md

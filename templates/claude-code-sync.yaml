@@ -51,6 +51,8 @@ claude_md:
   - about-my-project.md
 
   # Shared docs from claude-code-sync:
+  - https://raw.githubusercontent.com/hsankala/claude-code-sync/main/ai-doc-library/coding-conventions.md
+  - https://raw.githubusercontent.com/hsankala/claude-code-sync/main/ai-doc-library/code-comments.md
   - https://raw.githubusercontent.com/hsankala/claude-code-sync/main/ai-doc-library/speech-to-text.md
   - https://raw.githubusercontent.com/hsankala/claude-code-sync/main/ai-doc-library/chat-guidelines.md
   - https://raw.githubusercontent.com/hsankala/claude-code-sync/main/ai-doc-library/chat-response-style-guide.md
