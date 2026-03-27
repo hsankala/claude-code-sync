@@ -77,9 +77,9 @@ Suggest convening the council when:
 - There is genuine uncertainty and a second model's perspective would add value
 - The operator asks for a research dispatch
 
-### Research Dispatch
+### Farm It Out
 
-When a council session is warranted, use the `research-dispatch` skill if available. The goal of a research dispatch is to package up the current context — what the problem is, what has been tried, what is needed — into a form that can be handed off cleanly to another AI for independent research.
+When a council session is warranted, use the `farm-it-out` skill if available. The goal is to package up the current context — what the problem is, what has been tried, what is needed — into a form that can be handed off cleanly to another AI for independent research.
 
 A good research dispatch includes:
 - A clear statement of the problem
