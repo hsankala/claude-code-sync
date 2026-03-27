@@ -493,9 +493,10 @@ $WebAiDocFilename   = Get-YamlScalarValue -Lines $YamlLines -Key 'web_ai_doc_fil
 if (-not $WebAiDocFilename) { $WebAiDocFilename = 'web-ai-doc.md' }
 $WebAiDocOutputPath = Join-Path $ProjectRoot $WebAiDocFilename
 
-$ClaudeMdEntries = Get-YamlListSection -Lines $YamlLines -SectionName 'claude_md'
-$WebAiDocEntries = Get-YamlListSection -Lines $YamlLines -SectionName 'web_ai_doc'
-$SkillsEntries   = Get-YamlListSection -Lines $YamlLines -SectionName 'skills'
+$DisableSelfUpdate = Get-YamlScalarValue -Lines $YamlLines -Key 'disable_self_update'
+$ClaudeMdEntries   = Get-YamlListSection -Lines $YamlLines -SectionName 'claude_md'
+$WebAiDocEntries   = Get-YamlListSection -Lines $YamlLines -SectionName 'web_ai_doc'
+$SkillsEntries     = Get-YamlListSection -Lines $YamlLines -SectionName 'skills'
 
 Write-StepInfo "claude_md entries:  $($ClaudeMdEntries.Count)"
 Write-StepInfo "web_ai_doc entries: $($WebAiDocEntries.Count)"
@@ -508,7 +509,10 @@ if ($GitHubBaseUrl) { Write-StepInfo "GitHub base URL:    $GitHubBaseUrl" }
 # ---------------------------------------------------------------------------
 Write-SectionHeader "Checking for Script Updates"
 
-if (-not $RemoteScriptUrl) {
+if ($DisableSelfUpdate -eq 'true') {
+    Write-StepSkipped "Self-update disabled in config (disable_self_update: true)"
+}
+elseif (-not $RemoteScriptUrl) {
     Write-StepSkipped "No github_base_url/script_path in config — skipping self-update"
 }
 else {

@@ -6,9 +6,10 @@
 # Remote entries: full https:// URL
 # Order in list = order in assembled output
 
-github_base_url: https://raw.githubusercontent.com/hsankala/claude-code-sync/main
-script_path_ps1: tools/sync-claude-code.ps1
-script_path_sh:  tools/sync-claude-code.sh
+github_base_url:     https://raw.githubusercontent.com/hsankala/claude-code-sync/main
+script_path_ps1:     tools/sync-claude-code.ps1
+script_path_sh:      tools/sync-claude-code.sh
+disable_self_update: true
 
 # --------------------------------------------------------------------------
 # Launcher — generates tools/open-claude.ps1 to open Claude Code in a new

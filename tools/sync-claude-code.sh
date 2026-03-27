@@ -313,7 +313,8 @@ if [[ -z "$WEB_AI_DOC_FILENAME" ]]; then
 fi
 WEB_AI_DOC_OUTPUT_PATH="$PROJECT_ROOT/$WEB_AI_DOC_FILENAME"
 
-mapfile -t CLAUDE_MD_ENTRIES < <(get_yaml_list_section 'claude_md' "$CONFIG_FILE_PATH")
+DISABLE_SELF_UPDATE=$(get_yaml_scalar_value 'disable_self_update' "$CONFIG_FILE_PATH")
+mapfile -t CLAUDE_MD_ENTRIES  < <(get_yaml_list_section 'claude_md' "$CONFIG_FILE_PATH")
 mapfile -t WEB_AI_DOC_ENTRIES < <(get_yaml_list_section 'web_ai_doc' "$CONFIG_FILE_PATH")
 mapfile -t SKILLS_ENTRIES     < <(get_yaml_list_section 'skills'     "$CONFIG_FILE_PATH")
 
@@ -328,7 +329,9 @@ write_step_info "Local docs dir:     $LOCAL_DOCS_DIR"
 # ---------------------------------------------------------------------------
 write_section_header "Checking for Script Updates"
 
-if [[ -z "$REMOTE_SCRIPT_URL" ]]; then
+if [[ "$DISABLE_SELF_UPDATE" == "true" ]]; then
+    write_step_skipped "Self-update disabled in config (disable_self_update: true)"
+elif [[ -z "$REMOTE_SCRIPT_URL" ]]; then
     write_step_skipped "No github_base_url/script_path in config — skipping self-update"
 else
     write_step_info "Remote: $REMOTE_SCRIPT_URL"
