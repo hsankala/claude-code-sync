@@ -2,6 +2,9 @@
 CLAUDE.md
 CLAUDE-WEB-AI.md
 
+# Session context summaries
+context-summary/
+
 # OS
 .DS_Store
 Thumbs.db
