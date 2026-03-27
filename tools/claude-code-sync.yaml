@@ -33,12 +33,13 @@ launcher:
 claude_md:
   - about-claude-code-sync.md
   - project-structure.md
-  - ai-doc-library/coding-conventions.md
-  - ai-doc-library/code-comments.md
+  - https://raw.githubusercontent.com/hsankala/claude-code-sync/main/ai-doc-library/coding-conventions.md
+  - https://raw.githubusercontent.com/hsankala/claude-code-sync/main/ai-doc-library/code-comments.md
   - https://raw.githubusercontent.com/hsankala/claude-code-sync/main/ai-doc-library/speech-to-text.md
   - https://raw.githubusercontent.com/hsankala/claude-code-sync/main/ai-doc-library/chat-guidelines.md
   - https://raw.githubusercontent.com/hsankala/claude-code-sync/main/ai-doc-library/chat-response-style-guide.md
   - https://raw.githubusercontent.com/hsankala/claude-code-sync/main/ai-doc-library/chat-session-banners.md
+  - https://raw.githubusercontent.com/hsankala/claude-code-sync/main/ai-doc-library/ai-roleplay-and-collaboration.md
   - https://raw.githubusercontent.com/hsankala/claude-code-sync/main/ai-doc-library/tool-transparency.md
   - https://raw.githubusercontent.com/hsankala/claude-code-sync/main/ai-doc-library/claude-git-usage-windows.md
   - https://raw.githubusercontent.com/hsankala/claude-code-sync/main/ai-doc-library/claude-code-sync-guide.md
