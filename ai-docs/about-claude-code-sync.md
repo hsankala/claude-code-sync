@@ -54,9 +54,10 @@ Shared Claude Code slash command skills. Same principle as ai-docs — other pro
 these by raw GitHub URL and the sync script drops them into `.claude/commands/`.
 
 ### tools/
-This is where the script is developed and tested locally before being promoted to `scripts/`.
-Also contains this project's own `claude-code-sync.yaml`, which uses local file paths rather
-than remote URLs (since the files are already here).
+This is where both sync scripts live: `sync-claude-code.ps1` (PowerShell) and
+`sync-claude-code.sh` (Bash). Also contains this project's own `claude-code-sync.yaml`,
+which uses local file paths rather than remote URLs (since the files are already here).
+Do not look for the scripts anywhere else — they are in `tools/`, not `scripts/`.
 
 ---
 
@@ -120,7 +121,7 @@ with a clear message. It never silently produces incomplete output.
 **`CLAUDE.md`** — the full context file for Claude Code. Includes everything: project-specific
 docs, shared guidelines, tooling patterns, Git workflow. This is what Claude Code reads.
 
-**`web-ai-doc.md`** — an optional subset for sharing with web-based AI assistants (ChatGPT,
+**`CLAUDE-WEB-AI.md`** — an optional subset for sharing with web-based AI assistants (ChatGPT,
 Claude.ai, etc.). Typically excludes Claude-Code-specific docs like tool execution patterns,
 and includes only the substantive project and style docs that make sense outside Claude Code.
 Only generated if the `web_ai_doc` section in the config has entries.
@@ -151,48 +152,30 @@ it freely.
 
 If you are a Claude Code instance working on this repo, here is the lay of the land:
 
-- The sync script under active development is at `tools/sync-claude-code.ps1`
+- Both sync scripts are in `tools/` — `sync-claude-code.ps1` (PowerShell) and `sync-claude-code.sh` (Bash)
 - This project's own config is at `tools/claude-code-sync.yaml`
 - Shared docs being built out live in `ai-docs/`
 - Skills live in `skills/`
-- Once the script is stable it will be promoted to `scripts/` for distribution
-- The Bash version (`scripts/sync-claude-code.sh`) is still to be written
 
 The developer runs the PowerShell script on Windows and the Bash script in WSL/Linux.
 Both environments are in active use. Changes to one script should be reflected in the other.
 
 ---
 
-## ⚠️ Critical: Sync Script Changes Must Be Committed and Pushed Before Running
+## Self-Update Behaviour
 
-```
-┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
-┃  ⚠️  SYNC SCRIPT CHANGE DETECTED                                       ┃
-┃                                                                        ┃
-┃  You have just modified sync-claude-code.ps1 or sync-claude-code.sh.  ┃
-┃                                                                        ┃
-┃  The sync script's self-update step fetches the latest version from   ┃
-┃  GitHub and overwrites the local file if the hashes differ.           ┃
-┃                                                                        ┃
-┃  If you run the sync script before pushing, your changes will be      ┃
-┃  silently destroyed.                                                   ┃
-┃                                                                        ┃
-┃  Required steps — in this order, no exceptions:                       ┃
-┃                                                                        ┃
-┃    1. Review the changes                                               ┃
-┃    2. Commit                                                           ┃
-┃    3. Push to GitHub                                                   ┃
-┃    4. Then run the sync script                                         ┃
-┃                                                                        ┃
-┃  Do not run the sync script until the push is confirmed.              ┃
-┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
-```
+The sync scripts include a self-update step that fetches the latest version from GitHub and
+overwrites the local file if the hashes differ. **For this project, `disable_self_update: true`
+is set in `tools/claude-code-sync.yaml` and should remain that way.** This is the normal
+working state — the scripts are actively developed here and the self-update would overwrite
+local changes.
 
-**This applies every single time, without exception.** There is no case where it is safe to run
-the sync script immediately after modifying it. The self-update will fetch from GitHub, compare
-hashes, find a mismatch, overwrite the file, and exit — taking your local changes with it.
+If `disable_self_update` is ever changed to `false` during a session, flag it to the operator
+before running the sync script:
 
-**Claude Code's responsibility:** Any time changes are made to `sync-claude-code.ps1` or
-`sync-claude-code.sh`, output this warning immediately after completing the edit. Do not wait
-to be asked. Do not proceed to the next task. Surface the warning and wait for the operator to
-confirm the push has been done before running or suggesting to run the sync script.
+> Self-update is currently enabled (`disable_self_update: false`). Any uncommitted changes to
+> the sync scripts will be overwritten when the sync runs. Commit and push first, or set
+> `disable_self_update: true` to skip the check for this run.
+
+The self-update exists for consumer projects — it keeps their copy of the script current
+without manual intervention. For this repo, it is an active hazard and should stay disabled.
