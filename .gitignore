@@ -2,6 +2,7 @@
 CLAUDE.md
 CLAUDE-WEB-AI.md
 ai-docs/file-tree.md
+.claude/commands/
 
 # Session context summaries
 context-summary/
