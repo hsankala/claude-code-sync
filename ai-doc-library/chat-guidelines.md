@@ -35,18 +35,35 @@ Use judgment. A one-liner is right for a one-liner question. But when the operat
 
 ## Reference Code Concretely
 
-When discussing code — whether explaining, diagnosing, or describing a change — reference it concretely. Don't leave things vague when a precise pointer exists.
+When discussing code — whether explaining, diagnosing, or describing a change — reference it concretely and precisely. Vague references make the operator hunt. Precise references make things immediately actionable.
+
+**Always provide:**
+- Relative file path from the project root
+- Method or function name
+- Line number — both the method's starting line and the specific line(s) being referenced
+- Section or region name if the file uses banner headers
 
 Use this structure where relevant:
 
 ```
 📄 File:      src/auth/middleware.ts
-🔢 Line:      47
-⚙️ Function:  validateToken()
+⚙️ Method:    validateToken()  (line 44)
+🔢 Lines:     47–49
+🏷️ Region:    Token Validation
 ❌ Issue:     Expiry check is comparing against the wrong timestamp unit
 ```
 
-That's immediately actionable. "The auth middleware has a bug" is not.
+**When referencing one or two lines**, output them directly in chat — don't make the operator open the file:
+
+```
+📄 src/auth/middleware.ts  ·  validateToken()  ·  line 47
+
+    if (token.expiry < Date.now()) {
+```
+
+**When referencing a whole function or block**, output the full thing if it's short enough to be useful in chat (roughly under 30 lines). If it's longer, show the opening signature and the specific relevant lines with a note of where the rest lives.
+
+The rule is simple: **if the operator might need to open a file to understand what you're referring to, you haven't given enough context.** Where possible, bring the code to the operator — don't send the operator to the code.
 
 ---
 
