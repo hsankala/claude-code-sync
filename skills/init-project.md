@@ -256,8 +256,18 @@ Do not modify any existing content in the file.
 
 ## STEP 6: VS Code Task Buttons
 
-Create `.vscode/tasks.json` with the two standard tasks. Read `script_path_ps1` from
-`tools/claude-code-sync.yaml` for the sync script path (typically `tools/sync-claude-code.ps1`).
+Create `.vscode/tasks.json` with the two standard tasks.
+
+For the Generate Docs task, check which environment the project is running in:
+
+- **Windows / WSL** — read `script_path_ps1` from `tools/claude-code-sync.yaml` and use
+  `pwsh.exe` as the command (as shown in the template below)
+- **Linux native** — read `script_path_sh` from `tools/claude-code-sync.yaml` and replace
+  the command with `bash` and the `-File` arg with the shell script path instead
+
+When in doubt, check the `launcher` section of `tools/claude-code-sync.yaml` — a `mode: wsl`
+or `mode: ssh` entry confirms Windows/WSL; absence of a launcher and a Linux environment
+confirms native Linux.
 
 ```json
 {
@@ -276,11 +286,25 @@ Create `.vscode/tasks.json` with the two standard tasks. Read `script_path_ps1` 
     {
       "label": "Generate Docs",
       "type": "shell",
-      "command": "pwsh.exe -File {script_path_ps1}",
+      "command": "pwsh.exe",
+      "args": [
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        "{script_path_ps1}"
+      ],
       "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
         "panel": "shared",
-        "reveal": "always"
-      }
+        "showReuseMessage": false,
+        "clear": false
+      },
+      "runOptions": {
+        "runOn": "folderOpen"
+      },
+      "problemMatcher": []
     }
   ]
 }
