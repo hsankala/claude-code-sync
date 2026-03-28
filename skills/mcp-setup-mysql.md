@@ -103,8 +103,7 @@ claude mcp remove mysql
 Then add the MCP server:
 
 ```bash
-claude mcp add \
-  --scope local \
+claude mcp add mysql --scope local \
   -e MYSQL_HOST="<host>" \
   -e MYSQL_PORT="<port>" \
   -e MYSQL_USER="<user>" \
@@ -113,9 +112,10 @@ claude mcp add \
   -e ALLOW_INSERT_OPERATION="<true|false>" \
   -e ALLOW_UPDATE_OPERATION="<true|false>" \
   -e ALLOW_DELETE_OPERATION="<true|false>" \
-  mysql \
   -- npx -y @benborla29/mcp-server-mysql
 ```
+
+> ⚠️ The server name (`mysql`) must come **before** the `-e` flags. The `-e` option is variadic and will greedily consume positional arguments — if the name comes after the env vars, it gets parsed as an invalid env var and the command fails.
 
 Substitute the actual values confirmed in Step 2 and the flags from Step 3.
 
