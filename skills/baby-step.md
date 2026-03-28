@@ -7,6 +7,8 @@ description: >
   systems administration, Rust/compiled code, databases, DevOps, configuration, refactoring, or anything else.
   Baby Step Mode is about breaking work into manageable, reviewable chunks and reporting progress clearly after each one.
   Trigger this skill even when the user just implies they want a careful, staged approach.
+effort: medium
+disable-model-invocation: true
 ---
 
 # Baby Step Mode
