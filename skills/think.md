@@ -1,3 +1,9 @@
+---
+name: think
+description: Pause and reason before acting. Use when the user says "think", "think about", "think hard", "ultrathink", or asks for architectural guidance, trade-off analysis, or design-level decisions. Also trigger when the user asks to evaluate options, compare approaches, or wants a recommendation before implementation.
+effort: high
+---
+
 # Think Mode
 
 ---
@@ -38,11 +44,11 @@ Match your depth to the question. A simple "which approach?" needs a concise ans
 
 If the user signals a depth level, follow it:
 
-| Signal | Depth |
-|--------|-------|
-| **Think** | Straightforward reasoning — concise, focused |
-| **Think hard** | Deeper analysis — weigh trade-offs, consider edge cases |
-| **Ultrathink** | Maximum rigour — thorough exploration, multiple angles, detailed reasoning |
+| Signal | Depth | Effort |
+|--------|-------|--------|
+| **Think** | Straightforward reasoning — concise, focused | Medium |
+| **Think hard** | Deeper analysis — weigh trade-offs, consider edge cases, challenge your first instinct | High |
+| **Ultrathink** | Maximum rigour — exhaust the problem space, steel-man alternatives, consider 2nd and 3rd order effects | Max |
 
 If no level is stated, judge from the scope of the question and respond accordingly.
 
@@ -65,7 +71,7 @@ If there's one obvious right answer, just say so. Don't fabricate alternatives f
 
 ---
 
-## 🚨 TLDR
+## TLDR
 
 - **Read anything, change nothing.**
 - **Think first, recommend clearly, keep code minimal.**

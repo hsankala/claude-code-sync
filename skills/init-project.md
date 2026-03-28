@@ -51,7 +51,41 @@ uname -r
 
 Use this to form a launcher mode recommendation for the next step.
 
-### 2. Project Name
+### 2. Global Settings Health Check
+
+Read `~/.claude/settings.json` and check for an `attribution` block with `commit` and `pr`
+keys both set to empty strings.
+
+**If correctly configured:**
+```
+✅  Attribution suppressed — ~/.claude/settings.json
+    "commit": ""
+    "pr":     ""
+```
+
+**If missing or not set to empty strings:**
+```
+⚠️  Attribution not configured in ~/.claude/settings.json
+    By default, Claude Code adds itself as co-author to commits and PRs.
+
+    To suppress this, add to ~/.claude/settings.json:
+
+    "attribution": {
+      "commit": "",
+      "pr": ""
+    }
+
+    Add this now? (y/n)
+```
+
+If the operator says yes, add the block to `~/.claude/settings.json`.
+
+> Note: Attribution should only ever be set at the global level (`~/.claude/settings.json`),
+> never in project-level settings files.
+
+---
+
+### 3. Project Name
 
 Look at the current working directory name. Suggest four name options derived from it:
 - The raw directory name as-is
@@ -63,7 +97,7 @@ Present these as a numbered list with your recommendation marked. Ask the operat
 pick one or enter their own. The name will be used for the about doc filename:
 `about-{project-name}.md` — always lowercase, hyphen-separated.
 
-### 3. Launcher Mode
+### 4. Launcher Mode
 
 Based on the environment detected in step 1, present a recommendation:
 
