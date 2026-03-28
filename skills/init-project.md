@@ -484,7 +484,7 @@ never removed or modified.
       "Bash(ddev exec *)",
       "mcp__context7__*",
       "mcp__chrome-devtools__*",
-      "mcp__mysql_database__*",
+      "mcp__mysql__*",
       "mcp__stripe__*",
       "mcp__laravel-boost__*"
     ]
