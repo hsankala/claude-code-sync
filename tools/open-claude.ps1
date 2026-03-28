@@ -4,15 +4,11 @@
 # and re-run the sync script.
 
 function Open-ClaudeCode {
-    # Claude executable path note:
-    # Claude is installed locally (not system-wide) and aliased in ~/.bashrc.
-    # Aliases only load in interactive shells — PowerShell WSL commands run
-    # non-interactive shells that skip ~/.bashrc. We use the full executable path.
-    #
-    # To update: open WSL, run: type claude
-    # Copy the path and update claude_path in claude-code-sync.yaml, then resync.
+    # Launching as a login shell (bash --login) so that ~/.profile and ~/.bashrc are
+    # sourced, PATH is set correctly, and 'claude' resolves without a full path.
+    # Without --login, WSL commands run a non-interactive shell that skips both files.
 
-    $WslCommand = "wsl -d WordPress_Dev -e bash -c 'cd /mnt/c/tools/claude-code-sync && /home/hefin/.local/bin/claude --add-dir /mnt/c/Users/hsank/Documents/ShareX/Screenshots'"
+    $WslCommand = "wsl -d WordPress_Dev bash --login -c 'cd /mnt/c/tools/claude-code-sync && claude --add-dir /mnt/c/Users/hsank/Documents/ShareX/Screenshots'"
 
     $WindowsTerminalPath = "$env:LOCALAPPDATA\Microsoft\WindowsApps\wt.exe"
     & $WindowsTerminalPath -w 0 new-tab --title "CLAUDE-CODE-SYNC" --tabColor "#002B36" pwsh.exe -NoExit -Command $WslCommand

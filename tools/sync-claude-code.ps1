@@ -430,15 +430,11 @@ Open-ClaudeCode
 # and re-run the sync script.
 
 function Open-ClaudeCode {
-    # Claude executable path note:
-    # Claude is installed locally (not system-wide) and aliased in ~/.bashrc.
-    # Aliases only load in interactive shells — PowerShell WSL commands run
-    # non-interactive shells that skip ~/.bashrc. We use the full executable path.
-    #
-    # To update: open WSL, run: type claude
-    # Copy the path and update claude_path in claude-code-sync.yaml, then resync.
+    # Launching as a login shell (bash --login) so that ~/.profile and ~/.bashrc are
+    # sourced, PATH is set correctly, and 'claude' resolves without a full path.
+    # Without --login, WSL commands run a non-interactive shell that skips both files.
 
-    `$WslCommand = "wsl ${DistroArg}-e bash -c 'cd $ProjectPath && $ClaudePath$ExtraDirArgs'"
+    `$WslCommand = "wsl ${DistroArg}bash --login -c 'cd $ProjectPath && claude$ExtraDirArgs'"
 
     `$WindowsTerminalPath = "`$env:LOCALAPPDATA\Microsoft\WindowsApps\wt.exe"
     & `$WindowsTerminalPath -w 0 new-tab --title "$TabTitle" --tabColor "$TabColor" pwsh.exe -NoExit -Command `$WslCommand
