@@ -72,7 +72,7 @@ Ask the user if they want to restrict anything:
 
 If they don't raise a concern, proceed with all three as `true`.
 
-> ⚠️ These flags are baked into the MCP server at startup — they cannot be changed at runtime. If permissions need changing later, remove and re-add: `claude mcp remove mysql`.
+> ⚠️ These flags are baked into the MCP server at startup — they cannot be changed at runtime. If permissions need changing later, edit `~/.claude.json` directly (see **Editing config directly** below) and restart Claude Code.
 >
 > ⚠️ **Production environments** — always confirm with the user before setting up against a production database. Full write access on a live system is the user's call to make explicitly, not a default to accept without thought.
 
@@ -102,7 +102,10 @@ claude mcp remove mysql
 
 Then add the MCP server:
 
+> ⚠️ The server name (`mysql`) must come **immediately after `add`**, before any flags. The `-e` option is variadic and will greedily consume positional arguments — if the name comes after the env vars, it gets parsed as an invalid env var and the command fails.
+
 ```bash
+# ⚠️ Name 'mysql' MUST come immediately after 'add', before any -e flags
 claude mcp add mysql --scope local \
   -e MYSQL_HOST="<host>" \
   -e MYSQL_PORT="<port>" \
@@ -114,8 +117,6 @@ claude mcp add mysql --scope local \
   -e ALLOW_DELETE_OPERATION="<true|false>" \
   -- npx -y @benborla29/mcp-server-mysql
 ```
-
-> ⚠️ The server name (`mysql`) must come **before** the `-e` flags. The `-e` option is variadic and will greedily consume positional arguments — if the name comes after the env vars, it gets parsed as an invalid env var and the command fails.
 
 Substitute the actual values confirmed in Step 2 and the flags from Step 3.
 
@@ -150,18 +151,64 @@ Tell them:
 | Issue | Fix |
 |---|---|
 | `mysql` not found in `claude mcp list` | Re-run the add command and check for errors |
+| `-32000: Connection closed` | MCP server is crashing at startup — almost always a credentials or config issue. Test the raw connection first (see below), then verify credentials in `~/.claude.json` |
 | Connection refused | Confirm the database server is running and accessible from this environment |
-| Access denied | Double-check credentials — try connecting manually with `mysql -u <user> -p<pass> -h <host> <db>` |
-| Wrong database | Confirm `MYSQL_DB` — the database name in config files doesn't always match what you expect |
+| Access denied | Wrong username or password — test the raw connection (see below) to confirm what works |
+| Database doesn't exist | Run `SHOW DATABASES` via the raw connection test (below) to see what's actually there — the database may not have been created yet |
+| Wrong database | Confirm `MYSQL_DB` in `~/.claude.json` — the database name in config files doesn't always match what you expect |
 | Want to remove it | `claude mcp remove mysql` from the project root |
-| Need to change permissions | Remove and re-add — permissions are baked into the server at startup and cannot be changed at runtime |
+| Need to change credentials or permissions | Edit `~/.claude.json` directly (see below) — no need to remove and re-add for simple value changes |
 | `npx` not found | Install Node.js 18+ |
+
+### Testing the raw connection
+
+When the MCP server won't connect, cut it out of the picture entirely and test MySQL directly. This immediately tells you whether the problem is credentials, the server not running, or the database not existing:
+
+```bash
+mysql -h 127.0.0.1 -P 3306 -u root --password="" -e "SHOW DATABASES;"
+```
+
+Substitute the actual host, port, user, and password. If this succeeds, the MySQL server is reachable and the credentials work — the problem is likely the database name or the MCP config values. If it fails, the database server itself is the issue.
+
+---
+
+## Editing config directly
+
+For minor changes — password, port, database name, write permissions — you don't need to remove and re-add. Edit `~/.claude.json` directly and restart Claude Code.
+
+**File location:** `~/.claude.json` — home directory root. Note: this is NOT inside `~/.claude/` — it sits one level up at `~/.claude.json`.
+
+**Structure to navigate:**
+
+```
+~/.claude.json
+  └── projects
+        └── "/absolute/path/to/your/project"   ← keyed by project path
+              └── mcpServers
+                    └── mysql
+                          └── env
+                                ├── MYSQL_HOST
+                                ├── MYSQL_PORT
+                                ├── MYSQL_USER
+                                ├── MYSQL_PASS
+                                ├── MYSQL_DB
+                                ├── ALLOW_INSERT_OPERATION
+                                ├── ALLOW_UPDATE_OPERATION
+                                └── ALLOW_DELETE_OPERATION
+```
+
+To find the right block quickly, grep the file:
+
+```bash
+grep -n "MYSQL_DB\|MYSQL_PASS\|MYSQL_HOST" ~/.claude.json
+```
+
+Make the targeted change, save, and restart Claude Code. The MCP server will pick up the new values on next launch.
 
 ---
 
 ## Notes
 
-- The MCP config is stored in `~/.claude.json` — do not edit this file manually
 - **Always use `--scope local`** — this config applies only to the current project directory, which is almost always what you want
 - `--scope user` would make this MCP active across every project you open, globally — do not use this unless the user explicitly requests it and understands the implication
 - The MCP server uses stdio transport — it spawns a local Node.js process on demand
