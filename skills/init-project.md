@@ -478,7 +478,15 @@ never removed or modified.
       "Bash(git diff *)",
       "Bash(git branch *)",
       "Bash(git remote *)",
-      "Bash(git show *)"
+      "Bash(git show *)",
+      "Bash(git blame *)",
+      "Bash(git check-ignore *)",
+      "Bash(ddev exec *)",
+      "mcp__context7__*",
+      "mcp__chrome-devtools__*",
+      "mcp__mysql_database__*",
+      "mcp__stripe__*",
+      "mcp__laravel-boost__*"
     ]
   }
 }
