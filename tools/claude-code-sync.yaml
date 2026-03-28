@@ -44,6 +44,7 @@ claude_md:
   - https://raw.githubusercontent.com/hsankala/claude-code-sync/main/ai-doc-library/tool-transparency.md
   - https://raw.githubusercontent.com/hsankala/claude-code-sync/main/ai-doc-library/claude-git-usage-windows.md
   - https://raw.githubusercontent.com/hsankala/claude-code-sync/main/ai-doc-library/claude-code-sync-guide.md
+  - https://raw.githubusercontent.com/hsankala/claude-code-sync/main/ai-doc-library/mcp-servers.md
 
 # --------------------------------------------------------------------------
 # Web AI doc — subset for sharing with web-based AI assistants
@@ -66,3 +67,6 @@ skills:
   - https://raw.githubusercontent.com/hsankala/claude-code-sync/main/skills/summary.md
   - https://raw.githubusercontent.com/hsankala/claude-code-sync/main/skills/think.md
   - https://raw.githubusercontent.com/hsankala/claude-code-sync/main/skills/farm-it-out.md
+  - https://raw.githubusercontent.com/hsankala/claude-code-sync/main/skills/architect.md
+  - https://raw.githubusercontent.com/hsankala/claude-code-sync/main/skills/mcp-setup-context7.md
+  - https://raw.githubusercontent.com/hsankala/claude-code-sync/main/skills/mcp-setup-mysql.md
