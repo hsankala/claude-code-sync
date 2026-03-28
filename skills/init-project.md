@@ -51,37 +51,59 @@ uname -r
 
 Use this to form a launcher mode recommendation for the next step.
 
-### 2. Global Settings Health Check
+### 2. Global Settings Setup
 
-Read `~/.claude/settings.json` and check for an `attribution` block with `commit` and `pr`
-keys both set to empty strings.
+**Read `~/.claude/settings.json` in full before doing anything else.** If the file does not
+exist, treat it as an empty object `{}`. Do not assume its contents — read the whole file and
+understand its current state before checking anything.
 
-**If correctly configured:**
+Then check two things:
+
+#### 2a. Attribution suppression
+
+Check for an `attribution` block with both `commit` and `pr` set to empty strings.
+
+- ✅ Present and correct — note it and move on
+- ⚠️ Missing or not set to empty strings — flag it
+
+Attribution should only ever be set at the global level (`~/.claude/settings.json`), never
+in project-level settings files.
+
+#### 2b. Baseline permissions
+
+Compare the existing `permissions.allow` array against the baseline list in
+**Appendix A** at the end of this skill. Identify which entries from the baseline are
+absent from the current file.
+
+- ✅ All baseline entries present — note it and move on
+- ⚠️ Some or all missing — list how many are absent
+
+#### 2c. Offer to merge
+
+If either check flagged a gap, present a single combined offer:
+
 ```
-✅  Attribution suppressed — ~/.claude/settings.json
-    "commit": ""
-    "pr":     ""
+⚠️  ~/.claude/settings.json is missing the following:
+
+    [ ] Attribution suppression  (commit + pr set to "")
+    [ ] Baseline read permissions  (N entries missing from allow list)
+
+    This is a non-destructive merge — nothing currently in your settings
+    will be removed or changed. Only missing items will be added.
+
+    Apply now? (y/n)
 ```
 
-**If missing or not set to empty strings:**
+If the operator confirms, perform a single write:
+- Merge in any missing baseline permissions (additive — do not remove existing entries)
+- Set attribution suppression if not already correct
+- Preserve everything else in the file exactly as found
+
+If both checks passed, show a single clean confirmation and move on:
+
 ```
-⚠️  Attribution not configured in ~/.claude/settings.json
-    By default, Claude Code adds itself as co-author to commits and PRs.
-
-    To suppress this, add to ~/.claude/settings.json:
-
-    "attribution": {
-      "commit": "",
-      "pr": ""
-    }
-
-    Add this now? (y/n)
+✅  ~/.claude/settings.json — attribution suppressed, baseline permissions present
 ```
-
-If the operator says yes, add the block to `~/.claude/settings.json`.
-
-> Note: Attribution should only ever be set at the global level (`~/.claude/settings.json`),
-> never in project-level settings files.
 
 ---
 
@@ -401,4 +423,63 @@ The `task` field in each button must exactly match the `label` in `tasks.json`.
    2. Review tools/claude-code-sync.yaml — adjust shared docs as needed
    3. Push this project to GitHub (if not already)
    4. Run the sync script to generate CLAUDE.md and open-claude.ps1
+```
+
+---
+
+## Appendix A — Global Settings Baseline
+
+This is the minimum baseline for `~/.claude/settings.json`. Used by Pre-flight Step 2 to
+check and merge global settings. **Merge is always additive** — entries already present are
+never removed or modified.
+
+```json
+{
+  "attribution": {
+    "commit": "",
+    "pr": ""
+  },
+  "permissions": {
+    "allow": [
+      "Read",
+      "Glob",
+      "Grep",
+      "WebSearch",
+      "WebFetch",
+      "Bash(cat:*)",
+      "Bash(head:*)",
+      "Bash(tail:*)",
+      "Bash(less:*)",
+      "Bash(grep:*)",
+      "Bash(find:*)",
+      "Bash(ls:*)",
+      "Bash(tree:*)",
+      "Bash(pwd:*)",
+      "Bash(echo:*)",
+      "Bash(wc:*)",
+      "Bash(file:*)",
+      "Bash(stat:*)",
+      "Bash(which:*)",
+      "Bash(whereis:*)",
+      "Bash(env:*)",
+      "Bash(printenv:*)",
+      "Bash(whoami:*)",
+      "Bash(id:*)",
+      "Bash(groups:*)",
+      "Bash(hostname:*)",
+      "Bash(uname:*)",
+      "Bash(uptime:*)",
+      "Bash(df:*)",
+      "Bash(du:*)",
+      "Bash(free:*)",
+      "Bash(ps:*)",
+      "Bash(git status:*)",
+      "Bash(git log:*)",
+      "Bash(git diff:*)",
+      "Bash(git branch:*)",
+      "Bash(git remote:*)",
+      "Bash(git show:*)"
+    ]
+  }
+}
 ```
