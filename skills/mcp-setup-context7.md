@@ -1,6 +1,8 @@
 ---
 name: mcp-setup-context7
 description: Set up the Context7 MCP server for a Claude Code project. Use this skill whenever the user wants to add Context7, set up Context7, configure Context7 MCP, enable live documentation lookup, or connect Claude Code to up-to-date library docs. Also trigger when the user mentions "context7", "ctx7", "live docs MCP", or wants real-time library documentation in their Claude Code project.
+effort: medium
+disable-model-invocation: true
 ---
 
 # Context7 MCP Setup
