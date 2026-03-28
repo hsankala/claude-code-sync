@@ -1,6 +1,8 @@
 ---
 name: mcp-setup-mysql
 description: Set up a MySQL MCP server for a Claude Code project. Use this skill whenever the user wants to add MySQL database access, connect to a database, enable Claude Code to query MySQL, or configure database MCP. Also trigger for "mysql mcp", "database mcp", "connect to my database", or when the user wants Claude Code to read or write their MySQL database.
+effort: medium
+disable-model-invocation: true
 ---
 
 # MySQL MCP Setup

@@ -1,7 +1,8 @@
 ---
 name: think
-description: Pause and reason before acting. Use when the user says "think", "think about", "think hard", "ultrathink", or asks for architectural guidance, trade-off analysis, or design-level decisions. Also trigger when the user asks to evaluate options, compare approaches, or wants a recommendation before implementation.
+description: Use "think", "think about", "think hard", "ultrathink".
 effort: high
+disable-model-invocation: false
 ---
 
 # Think Mode

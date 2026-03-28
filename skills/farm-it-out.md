@@ -8,6 +8,8 @@ description: >
   another AI about this", "research dispatch", "create a handoff prompt", or any variation of
   wanting to package a problem up for a browser-based model. Produces a clean, copy-paste-ready
   prompt and guidance on parsing the results when they come back.
+effort: medium
+disable-model-invocation: false
 ---
 
 # Research Dispatch

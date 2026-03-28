@@ -1,6 +1,8 @@
 ---
 description: Generate a session handoff document for the next Claude Code instance
 allowed-tools: Bash(date:*), Bash(mkdir:*), Bash(ls:*)
+effort: medium
+disable-model-invocation: true
 ---
 
 ## Task
