@@ -1,3 +1,16 @@
+---
+name: commit
+description: Stage and commit code changes with clean atomic commits. Use when the user says "commit", "git commit", "commit my changes", "stage and commit", or asks to save/record their work to git. Also trigger when the user has finished a task and needs to commit the result.
+effort: medium
+disable-model-invocation: true
+allowed-tools:
+  - Bash(git status:*)
+  - Bash(git diff:*)
+  - Bash(git log:*)
+  - Bash(git add:*)
+  - Bash(git commit:*)
+---
+
 # Git Commit Guidelines
 
 ---
